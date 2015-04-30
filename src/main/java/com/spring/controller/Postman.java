@@ -26,7 +26,7 @@ import com.google.gson.JsonParser;
 @Controller
 public class Postman {
 
-	static HttpClient client = new DefaultHttpClient();
+	private static HttpClient client = new DefaultHttpClient();
 	@RequestMapping(value = "/postman",  method=RequestMethod.GET)
 	public String home() {
 	
