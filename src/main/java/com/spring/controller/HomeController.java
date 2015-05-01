@@ -56,8 +56,8 @@ public class HomeController {
 	
 		
 	
-	
-	@Scheduled(fixedDelay=1000)
+	//10 seconds
+	@Scheduled(fixedDelay=10000)
 	public void schedule()throws Exception
 	{
 		
@@ -87,8 +87,10 @@ public class HomeController {
 						VirtualMachine	vm = vms[j];
 							if(vm!=null)
 							{
+								PerformanceMeasure perf = new PerformanceMeasure(vm);
 								
-								if((vm.getName().equalsIgnoreCase(vmname+"1"))||vm.getName().equalsIgnoreCase(vmname+"2"))
+								
+								/*if((vm.getName().equalsIgnoreCase(vmname+"1"))||vm.getName().equalsIgnoreCase(vmname+"2"))
 								{
 									
 									System.out.println();
@@ -96,7 +98,7 @@ public class HomeController {
 
 									
 
-										if((vm.getGuest().getIpAddress()==null /*|| !p1.wait(1000, TimeUnit.MILLISECONDS)*/)
+										if((vm.getGuest().getIpAddress()==null || !p1.wait(1000, TimeUnit.MILLISECONDS))
 												&& vm.getOverallStatus() != ManagedEntityStatus.yellow) {
 											System.out.print("Ping Failed...");
 
@@ -106,10 +108,13 @@ public class HomeController {
 											System.out.println("Ping Succeed...");
 											System.out.println("Getting performance metrics after pinging..");
 
-											PerformanceMeasure.getVMUsage(vm, host);
+											//PerformanceMeasure.getVMUsage(vm, host);
+											
+											PerformanceMeasure perf = new PerformanceMeasure(vm);
+											perf.continueProgram();
 										}
 										
-								}
+								}*/
 
 							}
 

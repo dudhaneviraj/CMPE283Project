@@ -2,15 +2,30 @@ package edu.sjsu.cmpe283.performance;
 
 
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.Random;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import com.vmware.vim25.PerfCounterInfo;
+import com.vmware.vim25.PerfEntityMetricBase;
+import com.vmware.vim25.PerfEntityMetricCSV;
+import com.vmware.vim25.PerfMetricId;
+import com.vmware.vim25.PerfMetricSeriesCSV;
+import com.vmware.vim25.PerfProviderSummary;
+import com.vmware.vim25.PerfQuerySpec;
 import com.vmware.vim25.mo.HostSystem;
+import com.vmware.vim25.mo.InventoryNavigator;
+import com.vmware.vim25.mo.ManagedEntity;
 import com.vmware.vim25.mo.PerformanceManager;
+import com.vmware.vim25.mo.ServiceInstance;
 import com.vmware.vim25.mo.VirtualMachine;
+import edu.sjsu.cmpe283.util.*;
 import edu.sjsu.cmpe283.scaling.*;
-import edu.sjsu.cmpe283.scaling.ScaleOut;
 import edu.sjsu.cmpe283.util.MongoDBConnection;
 import edu.sjsu.cmpe283.vmoperation.Clone;
 
@@ -18,121 +33,192 @@ import edu.sjsu.cmpe283.vmoperation.Clone;
 public class PerformanceMeasure 
 {
 	//Host memory CPU usage. Need to change it later. Instead use CPU memory usage.
-	public static float upperThresholdUsage = 285;
-	public static PerformanceManager perfMgr;
-	public static PerformanceManager getPerfMgr() 
-	{
-		return perfMgr;
-	}
+	public static int upperThresholdUsage = 85;
 
+	public static int FOR_VM = 0;
+	public static int FOR_HOST = 1;
+
+	public static ManagedEntity vm;
+	public String[] PerfCounters = { "cpu.usage.average"/*,
+			"mem.usage.average", "net.usage.average", "disk.usage.average"*/ };
+	private PerformanceManager perfMgr;
+	private HashMap<Integer, PerfCounterInfo> countersInfoMap;
+	private HashMap<String, Integer> countersMap;
+	private PerfMetricId[] pmis;
+	//public  StringBuffer str;
+	public String currentLog;
 
 	public static String generateRandomId(){
 		Random random = new Random();
 		return "V-"+random.nextInt(Integer.MAX_VALUE)  + 1 ;
 	}
 
+	String vmname="Test-VM-";
+	public static String[] str={"Test-VM-1", "Test-VM-2"};
+	ServiceInstance si = new ServiceInstance(new URL(Util.vCenter_Server_URL), Util.USER_NAME, Util.PASSWORD, true);
 
-	public static void setPerfMgr(PerformanceManager perfMgr) {
-		PerformanceMeasure.perfMgr = perfMgr;
+	
+
+
+
+	ManagedEntity[] hosts = new InventoryNavigator(si.getRootFolder()).searchManagedEntities("HostSystem");
+
+	public PerformanceMeasure(ManagedEntity vm) throws RemoteException, IOException 
+	{
+		String s;
+		for(int k=0; k<str.length; k++)
+		{
+			
+			System.out.println("=="+k);
+			s=str[k];
+			this.vm  = new InventoryNavigator(
+					si.getRootFolder()).searchManagedEntity(
+							"VirtualMachine", s);
+			continueProgram();
+		}
+		
+
+
 	}
 
+	public void continueProgram() {
+		perfMgr = si.getPerformanceManager();
+		PerfCounterInfo[] pcis = perfMgr.getPerfCounter();
 
-	/*
-	 * Get VM usage 
-	 */
+		// create map between counter ID and PerfCounterInfo, counter name and
+		// ID
+		countersMap = new HashMap<String, Integer>();
+		countersInfoMap = new HashMap<Integer, PerfCounterInfo>();
 
-	public static float getVMUsage(VirtualMachine vm, HostSystem vHost) {
+		for (int i = 0; i < pcis.length; i++) {
+			countersInfoMap.put(pcis[i].getKey(), pcis[i]);
+			countersMap.put(pcis[i].getGroupInfo().getKey() + "."
+					+ pcis[i].getNameInfo().getKey() + "."
+					+ pcis[i].getRollupType(), pcis[i].getKey());
+		}
 
-		float cpuUsagePercent = 0;
+		pmis = createPerfMetricId(PerfCounters);
+		System.out.println("Performance manager is set up.");
 
 		try {
-
-			float vHostHertz = ((vHost).getHardware().cpuInfo.getHz()) / 1000000;
-			float vHostCpuCores = (vHost).getHardware().cpuInfo
-					.getNumCpuCores();
-
-			//CPU utilization
-			float cpuUtilization = vm.getSummary().getQuickStats().getOverallCpuDemand();
-			Integer hostMemoryUsage =vm.getSummary().quickStats.getHostMemoryUsage();
-			Integer memorySize=vm.getConfig().getHardware().getMemoryMB();
-			//Integer numCpu = vm.getConfig().getHardware().numCPU;
-			cpuUsagePercent = (cpuUtilization / (vHostHertz * vHostCpuCores) * 100);
-
-			//Mongo Connection
-			MongoDBConnection.dbConnection();
-			/*
-			 * Store in the performance collection
-			 * This will maintain a list of all the vm's performance
-			 */
-
-			DBCollection table = MongoDBConnection.db.getCollection("performance");
-			BasicDBObject document = new BasicDBObject();
-			document.put("Id", generateRandomId());
-			document.put("VM Name", vm.getName());
-			//document.put("Host", vHost.getName());
-			document.put("VM Memory usage", vm.getSummary().quickStats.getGuestMemoryUsage());
-			document.put("Max CPU usage", vHostHertz);
-			//document.put("CPU Cores", vHostCpuCores);
-			document.put("VM CPU Utilization",cpuUtilization);
-			document.put("Host memory usage",hostMemoryUsage);
-			//	document.put("Number of CPU", numCpu);
-			document.put("CPU Usage %", cpuUsagePercent);	
-			table.insert(document);
-
-
-
-			//If host memory usage is less than the threshold then create a list of healthy vm
-			if(hostMemoryUsage < upperThresholdUsage)
-			{
-				
-				//Create unique index
-				DBCollection table1 = MongoDBConnection.db.getCollection("healthyvm");
-				BasicDBObject document1 = new BasicDBObject();
-				System.out.println("Inserting into healthy vm collection..");
-				System.out.println();
-				document1.put("VM Name", vm.getName());
-				document1.put("VM IP", vm.getGuest().getIpAddress());
-				document1.put("VM CPU Utilization",cpuUtilization);
-				document1.put("Host memory usage",hostMemoryUsage);
-				table1.insert(document);
-				
-				//Scale out
-				ScaleOut.scaleOut();
-				
-			}
-			
-			
-			
-			/*else
-			{
-				System.out.println("Clone VM TASK WILL BE PERFORMED NOW");
-				System.out.println();
-
-				Clone.clone(vm.getName());
-			}*/
-
-
-
-
-
-			System.out.println("VM memory usage " + vm.getSummary().quickStats.getGuestMemoryUsage()+ " MB");
-			System.out.println("Max CPU Usage: " + vHostHertz+" hertz");
-			//System.out.println("vHostCpuCores: " + vHostCpuCores);
-			System.out.println("VM Cpu utilization " +  cpuUtilization);
-			System.out.println("CPU Usage Percentage " + cpuUsagePercent);
-			System.out.println("Host memory CPU usage " + hostMemoryUsage);
-			System.out.println("Memory size " + memorySize);
-			//System.out.println("Number of CPU: " + numCpu);
-			System.out.println("");
-
-		} catch (Exception e){
+			printPerf(vm);
+			Thread.sleep(1000);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return cpuUsagePercent;
-
 	}
 
+	private PerfMetricId[] createPerfMetricId(String[] counters) {
+		PerfMetricId[] metricIds = new PerfMetricId[counters.length];
+		for (int i = 0; i < counters.length; i++) {
+			PerfMetricId metricId = new PerfMetricId();
+			metricId.setCounterId(countersMap.get(counters[i]));
+			metricId.setInstance("*");
+			metricIds[i] = metricId;
+		}
+		return metricIds;
+	}
+
+	public void printPerf(ManagedEntity me) throws Exception {
+		PerfProviderSummary pps = perfMgr.queryPerfProviderSummary(me);
+		int refreshRate = pps.getRefreshRate().intValue();
+		// only return the latest one sample
+		PerfQuerySpec qSpec = createPerfQuerySpec(me, 1, refreshRate);
+
+		PerfEntityMetricBase[] pValues = perfMgr
+				.queryPerf(new PerfQuerySpec[] { qSpec });
+		if (pValues != null) {
+			displayValues(pValues);
+		}
+	}
+
+	private void displayValues(PerfEntityMetricBase[] values) throws FileNotFoundException {
+		for (int i = 0; i < values.length; ++i) {
+			printPerfMetricCSV((PerfEntityMetricCSV) values[i]);
+		}
+	}
+
+	private void printPerfMetricCSV(PerfEntityMetricCSV pem)
+			throws FileNotFoundException {
+
+		try {
+			PerfMetricSeriesCSV[] csvs = pem.getValue();
+			HashMap<Integer, PerfMetricSeriesCSV> stats = new HashMap<Integer, PerfMetricSeriesCSV>();
+
+			for (int i = 0; i < csvs.length; i++) {
+				stats.put(csvs[i].getId().getCounterId(), csvs[i]);
+			}
+
+			for (String counter : PerfCounters) {
+				Integer counterId = countersMap.get(counter);
+				PerfCounterInfo pci = countersInfoMap.get(counterId);
+				String value = null;
+				String key = null;
+				System.out.println("Counter id: " + counterId);
+
+				if (stats.containsKey(counterId))
+					value = stats.get(counterId).getValue();
+				if (value == null ||Integer.parseInt(value)<0 || value.length() == 0) {
+					value = "0";
+				}
+
+
+				MongoDBConnection.dbConnection();
+				DBCollection table = MongoDBConnection.db.getCollection("performance");
+				BasicDBObject document = new BasicDBObject();
+				value = stats.get(counterId).getValue();
+				document.put("Id", generateRandomId());
+				document.put("VM Name", vm.getName());
+				document.put("vCPU usage", value);
+				table.insert(document);
+				System.out.println("value inserted");
+
+
+				System.out.println("Value is " + value);
+
+				if(Integer.parseInt(value) < upperThresholdUsage)
+				{
+					DBCollection table1 = MongoDBConnection.db.getCollection("healthyvm");
+					BasicDBObject document1 = new BasicDBObject();
+					value = stats.get(counterId).getValue();
+					document1.put("Id", generateRandomId());
+					document1.put("VM Name", vm.getName());
+					document1.put("vCPU usage", value);
+					table1.insert(document);
+					System.out.println("value inserted");
+
+					ScaleOut.scaleOut();
+				}
+
+				/*		else
+				{
+					System.out.println("Clone VM TASK WILL BE PERFORMED NOW");
+					System.out.println();
+
+				//	Clone.clone(vm.getName());
+				}*/
+
+			}
+
+
+		} catch (Exception e) {
+			//System.out.println("error in print perf " + e.getMessage());
+		}
+	}
+
+	synchronized private PerfQuerySpec createPerfQuerySpec(
+			ManagedEntity me, int maxSample, int interval) {
+
+		PerfQuerySpec qSpec = new PerfQuerySpec();
+		qSpec.setEntity(me.getMOR());
+		// set the maximum of metrics to be return
+		qSpec.setMaxSample(new Integer(maxSample));
+		qSpec.setMetricId(pmis);
+		qSpec.setFormat("csv");
+		qSpec.setIntervalId(new Integer(interval));
+		return qSpec;
+	}
 
 
 
