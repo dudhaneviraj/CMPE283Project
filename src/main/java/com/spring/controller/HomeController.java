@@ -16,9 +16,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.mongodb.DB;
-import com.vmware.vim25.ManagedEntityStatus;
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
 import com.vmware.vim25.mo.HostSystem;
 import com.vmware.vim25.mo.InventoryNavigator;
 import com.vmware.vim25.mo.ManagedEntity;
@@ -26,8 +28,6 @@ import com.vmware.vim25.mo.ServiceInstance;
 import com.vmware.vim25.mo.VirtualMachine;
 
 import edu.sjsu.cmpe283.performance.PerformanceMeasure;
-import edu.sjsu.cmpe283.performance.ReadPerformance;
-import edu.sjsu.cmpe283.util.MongoDBConnection;
 import edu.sjsu.cmpe283.util.Util;
 /**
  * Handles requests for the application home page.
@@ -52,10 +52,7 @@ public class HomeController {
 		String formattedDate = dateFormat.format(date);
 		model.addAttribute("serverTime", formattedDate );		
 		return "home";
-	}	
-	
-		
-	
+	}		
 	//10 seconds
 	@Scheduled(fixedDelay=10000)
 	public void schedule()throws Exception
