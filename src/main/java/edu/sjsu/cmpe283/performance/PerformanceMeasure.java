@@ -4,10 +4,8 @@ package edu.sjsu.cmpe283.performance;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.HashMap;
-import java.util.Random;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -18,16 +16,13 @@ import com.vmware.vim25.PerfMetricId;
 import com.vmware.vim25.PerfMetricSeriesCSV;
 import com.vmware.vim25.PerfProviderSummary;
 import com.vmware.vim25.PerfQuerySpec;
-import com.vmware.vim25.mo.HostSystem;
-import com.vmware.vim25.mo.InventoryNavigator;
 import com.vmware.vim25.mo.ManagedEntity;
 import com.vmware.vim25.mo.PerformanceManager;
 import com.vmware.vim25.mo.ServiceInstance;
 import com.vmware.vim25.mo.VirtualMachine;
-import edu.sjsu.cmpe283.util.*;
-import edu.sjsu.cmpe283.scaling.*;
+
+import edu.sjsu.cmpe283.scaling.ScaleOut;
 import edu.sjsu.cmpe283.util.MongoDBConnection;
-import edu.sjsu.cmpe283.vmoperation.Clone;
 
 
 public class PerformanceMeasure 
@@ -35,8 +30,7 @@ public class PerformanceMeasure
 	//Host memory CPU usage. Need to change it later. Instead use CPU memory usage.
 	public static int upperThresholdUsage = 85;
 
-	public static int FOR_VM = 0;
-	public static int FOR_HOST = 1;
+	
 
 	public static VirtualMachine vm;
 	public String[] PerfCounters = { "cpu.usage.average"/*,
@@ -45,38 +39,15 @@ public class PerformanceMeasure
 	private HashMap<Integer, PerfCounterInfo> countersInfoMap;
 	private HashMap<String, Integer> countersMap;
 	private PerfMetricId[] pmis;
-	//public  StringBuffer str;
-	public String currentLog;
-
-	public static String generateRandomId(){
-		Random random = new Random();
-		return "V-"+random.nextInt(Integer.MAX_VALUE)  + 1 ;
-	}
-
-	String vmname="Test-VM-";
-	public static String[] str={"Test-VM-1", "Test-VM-2"};
-	ServiceInstance si = new ServiceInstance(new URL(Util.vCenter_Server_URL), Util.USER_NAME, Util.PASSWORD, true);
+	ServiceInstance si = null;
 
 	
-
-
-
-	ManagedEntity[] hosts = new InventoryNavigator(si.getRootFolder()).searchManagedEntities("HostSystem");
-
-	public PerformanceMeasure(ManagedEntity vm) throws RemoteException, IOException 
+	public PerformanceMeasure(ServiceInstance si2, VirtualMachine vm) throws RemoteException, IOException 
 	{
+		si = si2;
 		
-		String s;
-		for(int k=0; k<str.length; k++)
-		{
-			
-			System.out.println("=="+k);
-			s=str[k];
-			this.vm  = (VirtualMachine) new InventoryNavigator(
-					si.getRootFolder()).searchManagedEntity(
-							"VirtualMachine", s);
-			continueProgram();
-		}
+		this.vm  = vm;
+		continueProgram();
 		
 
 
@@ -155,7 +126,6 @@ public class PerformanceMeasure
 				Integer counterId = countersMap.get(counter);
 				PerfCounterInfo pci = countersInfoMap.get(counterId);
 				String value = null;
-				String key = null;
 				System.out.println("Counter id: " + counterId);
 
 				if (stats.containsKey(counterId))
@@ -165,11 +135,9 @@ public class PerformanceMeasure
 				}
 
 
-				MongoDBConnection.dbConnection();
 				DBCollection table = MongoDBConnection.db.getCollection("performance");
 				BasicDBObject document = new BasicDBObject();
 				value = stats.get(counterId).getValue();
-				document.put("Id", generateRandomId());
 				document.put("VM Name", vm.getName());
 				document.put("vCPU usage", value);
 				table.insert(document);
@@ -178,20 +146,30 @@ public class PerformanceMeasure
 
 				System.out.println("Value is " + value);
 
+				
+				
+				//if in next ping cycle, threshold of vm is greater than upper threshold and vm is a;ready present in
+				//healthy vm then don't put it in healthy vm and remove it from HVM
 				if(Integer.parseInt(value) < upperThresholdUsage)
 				{
+					
+					//check if present
+					//If not present --> insert
+					// If present --> update
 					DBCollection table1 = MongoDBConnection.db.getCollection("healthyvm");
 					BasicDBObject document1 = new BasicDBObject();
 					value = stats.get(counterId).getValue();
-					document1.put("Id", generateRandomId());
 					document1.put("VM Name", vm.getName());
+					 
+				
+					//store vcpu usage and vmname in hashmap
 					document1.put("vCPU usage", value);
 					document1.put("VM IP", vm.getGuest().getIpAddress());
 					table1.insert(document1);
 					System.out.println("value inserted");
 					
 					
-					
+					// call this outside for only once
 					ScaleOut.scaleOut();
 				}
 			}

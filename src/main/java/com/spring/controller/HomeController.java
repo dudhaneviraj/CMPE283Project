@@ -1,5 +1,6 @@
 package com.spring.controller;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -37,12 +38,11 @@ import edu.sjsu.cmpe283.util.Util;
 @Configuration
 @EnableScheduling
 public class HomeController {
+
+
 	
-	public static final String vm1Name="Test-VM-1";
-	public static final String vm2Name="Test-VM-2";
-	public static DB db;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-	
+
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
@@ -57,104 +57,59 @@ public class HomeController {
 	}		
 	//10 seconds
 	@Scheduled(fixedDelay=10000)
-	public void schedule()throws Exception
+	public void schedule()
 	{
-		
-		
+
+
 		// get allvms
-		ServiceInstance si = new ServiceInstance(new URL(Util.vCenter_Server_URL), Util.USER_NAME, Util.PASSWORD, true);
-		DBCollection collec = MongoDBConnection.db.getCollection("allvm");
-		DBCursor cursor = collec.find();
-		
-		while(cursor.hasNext())
+		ServiceInstance si;
+		DBCursor cursor = null;
+		try
 		{
-			DBObject obj = cursor.next();
-			String vmName = (String) obj.get("VM Name");
 			
-			ManagedEntity entity =  new InventoryNavigator(si.getRootFolder()).searchManagedEntity("VirtualMachine", vmName);
-			
-			VirtualMachine vm = (VirtualMachine) entity;
-			PerformanceMeasure perf = new PerformanceMeasure(vm);
-			
-		}
-	
-		String vmname = "Test-VM-";
+			si = new ServiceInstance(new URL(Util.vCenter_Server_URL), Util.USER_NAME, Util.PASSWORD, true);
+			DBCollection collec = MongoDBConnection.db.getCollection("allvm");
+			cursor = collec.find();
 
-		try 
-		{
-
-			
-
-			ManagedEntity[] hosts = new InventoryNavigator(si.getRootFolder()).searchManagedEntities("HostSystem");
-
-			for(int i=0; i<hosts.length; i++) 
+			while(cursor.hasNext())
 			{
-			HostSystem	host = (HostSystem) hosts[i];
-				if(host!=null)
-				{
+				DBObject obj = cursor.next();
+				String vmName = (String) obj.get("VM Name");
 
-					if(host.getName()!=null)
-					{
-						
-						VirtualMachine vms[] = host.getVms();
-						for(int j=0; j<vms.length; j++)
-						{
-						VirtualMachine	vm = vms[j];
-							if(vm!=null)
-							{
-								PerformanceMeasure perf = new PerformanceMeasure(vm);
-								
-								
-								/*if((vm.getName().equalsIgnoreCase(vmname+"1"))||vm.getName().equalsIgnoreCase(vmname+"2"))
-								{
-									
-									System.out.println();
-									System.out.print("VM: "+ vm.getName()+" Ping: ");
+				ManagedEntity entity =  new InventoryNavigator(si.getRootFolder()).searchManagedEntity("VirtualMachine", vmName);
 
-									
+				VirtualMachine vm = (VirtualMachine) entity;
+				PerformanceMeasure perf = new PerformanceMeasure(si , vm);
 
-										if((vm.getGuest().getIpAddress()==null || !p1.wait(1000, TimeUnit.MILLISECONDS))
-												&& vm.getOverallStatus() != ManagedEntityStatus.yellow) {
-											System.out.print("Ping Failed...");
-
-										}
-										else
-										{
-											System.out.println("Ping Succeed...");
-											System.out.println("Getting performance metrics after pinging..");
-
-											//PerformanceMeasure.getVMUsage(vm, host);
-											
-											PerformanceMeasure perf = new PerformanceMeasure(vm);
-											perf.continueProgram();
-										}
-										
-								}*/
-
-							}
-
-						}
-
-					}
-				}
 			}
 
-		} catch (RemoteException e) 
-		{
-			e.printStackTrace();
-		} catch (MalformedURLException e) 
-		{
 
+
+		}
+		catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		finally
+		{
+			cursor.close();
+		}
+
+
 
 
 		/*-----------------*/
 
 
 		System.out.print("\n");	
-		
-		
+
+
 	}
-	
+
 }

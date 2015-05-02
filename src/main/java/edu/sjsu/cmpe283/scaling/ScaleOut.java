@@ -13,10 +13,16 @@ public class ScaleOut
 	
 	public static void scaleOut() throws UnknownHostException
 	{
+		
+		// Iterate over the hashmap and count the no. of instances whose values are in the range of HTu and TSu
+		// if the count is gte the number of majority Healthy VMs
+		// then scale out
+		
 		db = MongoDBConnection.db;
 		long countOfHealthyVM = db.getCollection("healthyvm").count();
 		long countOfAllVM = db.getCollection("allvm").count();
-		long majorityOfHealthyVM = (long) (countOfAllVM*0.75);
+		
+		long majorityOfHealthyVM = (long) (countOfAllVM/2)+1;
 		
 		
 		System.out.println("Healthy vm: " + countOfHealthyVM);
