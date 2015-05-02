@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -17,11 +16,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.vmware.vim25.mo.HostSystem;
 import com.vmware.vim25.mo.InventoryNavigator;
 import com.vmware.vim25.mo.ManagedEntity;
@@ -29,6 +28,7 @@ import com.vmware.vim25.mo.ServiceInstance;
 import com.vmware.vim25.mo.VirtualMachine;
 
 import edu.sjsu.cmpe283.performance.PerformanceMeasure;
+import edu.sjsu.cmpe283.util.MongoDBConnection;
 import edu.sjsu.cmpe283.util.Util;
 /**
  * Handles requests for the application home page.
@@ -41,10 +41,8 @@ public class HomeController {
 	public static final String vm1Name="Test-VM-1";
 	public static final String vm2Name="Test-VM-2";
 	public static DB db;
-	
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
@@ -57,20 +55,35 @@ public class HomeController {
 		model.addAttribute("serverTime", formattedDate );		
 		return "home";
 	}		
-
 	//10 seconds
-	@Scheduled(fixedRate=60000)
+	@Scheduled(fixedDelay=10000)
 	public void schedule()throws Exception
 	{
 		
+		
+		// get allvms
+		ServiceInstance si = new ServiceInstance(new URL(Util.vCenter_Server_URL), Util.USER_NAME, Util.PASSWORD, true);
+		DBCollection collec = MongoDBConnection.db.getCollection("allvm");
+		DBCursor cursor = collec.find();
+		
+		while(cursor.hasNext())
+		{
+			DBObject obj = cursor.next();
+			String vmName = (String) obj.get("VM Name");
+			
+			ManagedEntity entity =  new InventoryNavigator(si.getRootFolder()).searchManagedEntity("VirtualMachine", vmName);
+			
+			VirtualMachine vm = (VirtualMachine) entity;
+			PerformanceMeasure perf = new PerformanceMeasure(vm);
+			
+		}
 	
-		ServiceInstance si;
 		String vmname = "Test-VM-";
 
 		try 
 		{
 
-			si = new ServiceInstance(new URL(Util.vCenter_Server_URL), Util.USER_NAME, Util.PASSWORD, true);
+			
 
 			ManagedEntity[] hosts = new InventoryNavigator(si.getRootFolder()).searchManagedEntities("HostSystem");
 
@@ -89,8 +102,34 @@ public class HomeController {
 						VirtualMachine	vm = vms[j];
 							if(vm!=null)
 							{
-								System.out.println("The time is now " + dateFormat.format(new Date()));
 								PerformanceMeasure perf = new PerformanceMeasure(vm);
+								
+								
+								/*if((vm.getName().equalsIgnoreCase(vmname+"1"))||vm.getName().equalsIgnoreCase(vmname+"2"))
+								{
+									
+									System.out.println();
+									System.out.print("VM: "+ vm.getName()+" Ping: ");
+
+									
+
+										if((vm.getGuest().getIpAddress()==null || !p1.wait(1000, TimeUnit.MILLISECONDS))
+												&& vm.getOverallStatus() != ManagedEntityStatus.yellow) {
+											System.out.print("Ping Failed...");
+
+										}
+										else
+										{
+											System.out.println("Ping Succeed...");
+											System.out.println("Getting performance metrics after pinging..");
+
+											//PerformanceMeasure.getVMUsage(vm, host);
+											
+											PerformanceMeasure perf = new PerformanceMeasure(vm);
+											perf.continueProgram();
+										}
+										
+								}*/
 
 							}
 
@@ -108,10 +147,14 @@ public class HomeController {
 
 			e.printStackTrace();
 		}
+
+
+		/*-----------------*/
+
+
 		System.out.print("\n");	
 		
+		
 	}
-	
-	
 	
 }

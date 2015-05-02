@@ -67,16 +67,17 @@
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="/controller/postman">VMWare VMManager</a>
+				<a class="navbar-brand" href="/controller/postman">VMWare
+					VMManager</a>
 			</div>
 			<!-- Top Menu Items -->
 			<ul class="nav navbar-right top-nav">
-					</ul>
+			</ul>
 			<!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav side-nav">
-					<li><a href="/controller/vmdata"><i class="fa fa-fw fa-dashboard"></i>
-							Dashboard</a></li>
+					<li><a href="/controller/vmdata"><i
+							class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
 					<li><a href="/controller/performance"><i
 							class="fa fa-fw fa-bar-chart-o"></i> Charts</a></li>
 					<li><a href="bootstrap-elements.html"><i
@@ -95,36 +96,32 @@
 					<div class="col-lg-12">
 						<h1 class="page-header">Postman</h1>
 						<ol class="breadcrumb">
-							<li><i class="fa fa-dashboard"></i> <a href="/controller/vmdata">Dashboard</a>
-							</li>	
+							<li><i class="fa fa-dashboard"></i> <a
+								href="/controller/vmdata">Dashboard</a></li>
 						</ol>
 					</div>
 				</div>
 				<!-- /.row -->
 
 				<div class="row">
-					<form action="/controller/send" method="post">
-						<div class="col-lg-6">
+					<form name="postmanForm" action="/controller/send" method="post">
+						<div class="col-lg-9">
 							<div class="form-group">
 								<label>Enter URL Here</label> <input id="url" name="url"
 									class="form-control">
 								<p class="help-block">Example http://www.google.com</p>
 							</div>
-							<div class="form-group">
-								<div class="form-group">
-									<label>Request Body</label>
-									<textarea id="request" name="request" class="form-control"
-										rows="3"></textarea>
-								</div>
-								<button id="send" name="send" type="submit"
-									class="btn btn-primary">Send</button>
-								<button id="reset" name="reset" type="reset"
-									class="btn btn-primary">Reset</button>
-							</div>
 						</div>
-						<div class="col-lg-6">
+						<div class="col-lg-3">
 							<div class="form-group">
 								<label>Select Method</label> <select id="method" name="method"
+									onchange="if (this.options[this.selectedIndex].value =='GET')
+								 {
+								 document.getElementById('req').style.visibility='hidden'
+								 }
+								 else {
+								 document.getElementById('req').style.visibility='visible'
+								 };"
 									class="form-control">
 									<option value="GET">GET</option>
 									<option value="POST">POST</option>
@@ -132,14 +129,44 @@
 									<option value="DELETE">DELETE</option>
 								</select>
 							</div>
-							<br>
-							<div class="form-group">
-								<label>Response Body</label><br> ${response}
-							</div>
-							
+
 						</div>
-					</form>
 				</div>
+
+				<div class="row">
+					<div class="col-lg-12">
+
+
+
+						<div class="form-group">
+							<div id="req" class="form-group">
+								<label id="request_body">Request Body</label>
+								<textarea id="request" name="request" class="form-control"
+									rows="8"></textarea>
+							</div>
+							<button id="send" name="send" type="submit"
+								class="btn btn-primary">Send</button>
+							<button id="reset" name="reset" type="reset"
+								class="btn btn-primary">Reset</button>
+
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-12">
+						<br>
+
+						<div class="form-group">
+							<label>Response Body</label><br>
+							<textarea id="response" name="response" class="form-control"
+								rows="8">${response}</textarea>
+
+						</div>
+					</div>
+				</div>
+				</form>
+
 				<!-- /.row -->
 			</div>
 			<!-- /.container-fluid -->
@@ -152,13 +179,19 @@
 
 	<!-- Bootstrap Core JavaScript -->
 	<script
-		src="<c:url value="/resources/static/js/bootstrap.min.js"></c:url>">      </script>
+		src="<c:url value="/resources/static/js/bootstrap.min.js"></c:url>">
+		
+	</script>
 
 	<!-- Morris Charts JavaScript -->
 	<script
-		src="<c:url value="/resources/static/js/plugins/morris/raphael.min.js"></c:url>">   </script>
+		src="<c:url value="/resources/static/js/plugins/morris/raphael.min.js"></c:url>">
+		
+	</script>
 	<script
-		src="<c:url value="/resources/static/js/plugins/morris/morris.min.js"></c:url>">	</script>
+		src="<c:url value="/resources/static/js/plugins/morris/morris.min.js"></c:url>">
+		
+	</script>
 	<script
 		src="<c:url value="/resources/static/js/plugins/morris/morris-data.js"></c:url>"></script>
 </body>

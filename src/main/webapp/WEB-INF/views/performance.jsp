@@ -306,10 +306,10 @@ hr {
 					
 				<div class="col-xs-12" onload="javascript:drawChart()">
 						
-					<div class="col-xs-3">
+					<div class="col-xs-4">
 								<div id="${listValue}" class="chart_div"></div>
 					</div>
-					<div class="col-xs-9">
+					<div class="col-xs-8">
 						
 						
 						
