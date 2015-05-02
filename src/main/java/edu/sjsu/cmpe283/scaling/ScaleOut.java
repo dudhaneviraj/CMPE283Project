@@ -31,7 +31,7 @@ public class ScaleOut
 			System.out.println("Clone VM TASK WILL BE PERFORMED NOW");
 			System.out.println();
 
-			Clone.clone("Test-VM-");
+			//Clone.clone("Test-VM-");
 			
 		}
 	}

@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -40,6 +41,9 @@ public class HomeController {
 	public static final String vm1Name="Test-VM-1";
 	public static final String vm2Name="Test-VM-2";
 	public static DB db;
+	
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	/**
 	 * Simply selects the home view to render by returning its name.
@@ -53,8 +57,9 @@ public class HomeController {
 		model.addAttribute("serverTime", formattedDate );		
 		return "home";
 	}		
+
 	//10 seconds
-	@Scheduled(fixedDelay=10000)
+	@Scheduled(fixedRate=60000)
 	public void schedule()throws Exception
 	{
 		
@@ -84,34 +89,8 @@ public class HomeController {
 						VirtualMachine	vm = vms[j];
 							if(vm!=null)
 							{
+								System.out.println("The time is now " + dateFormat.format(new Date()));
 								PerformanceMeasure perf = new PerformanceMeasure(vm);
-								
-								
-								/*if((vm.getName().equalsIgnoreCase(vmname+"1"))||vm.getName().equalsIgnoreCase(vmname+"2"))
-								{
-									
-									System.out.println();
-									System.out.print("VM: "+ vm.getName()+" Ping: ");
-
-									
-
-										if((vm.getGuest().getIpAddress()==null || !p1.wait(1000, TimeUnit.MILLISECONDS))
-												&& vm.getOverallStatus() != ManagedEntityStatus.yellow) {
-											System.out.print("Ping Failed...");
-
-										}
-										else
-										{
-											System.out.println("Ping Succeed...");
-											System.out.println("Getting performance metrics after pinging..");
-
-											//PerformanceMeasure.getVMUsage(vm, host);
-											
-											PerformanceMeasure perf = new PerformanceMeasure(vm);
-											perf.continueProgram();
-										}
-										
-								}*/
 
 							}
 
@@ -129,14 +108,10 @@ public class HomeController {
 
 			e.printStackTrace();
 		}
-
-
-		/*-----------------*/
-
-
 		System.out.print("\n");	
 		
-		
 	}
+	
+	
 	
 }

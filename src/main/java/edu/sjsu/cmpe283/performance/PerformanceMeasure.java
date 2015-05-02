@@ -38,7 +38,7 @@ public class PerformanceMeasure
 	public static int FOR_VM = 0;
 	public static int FOR_HOST = 1;
 
-	public static ManagedEntity vm;
+	public static VirtualMachine vm;
 	public String[] PerfCounters = { "cpu.usage.average"/*,
 			"mem.usage.average", "net.usage.average", "disk.usage.average"*/ };
 	private PerformanceManager perfMgr;
@@ -65,13 +65,14 @@ public class PerformanceMeasure
 
 	public PerformanceMeasure(ManagedEntity vm) throws RemoteException, IOException 
 	{
+		
 		String s;
 		for(int k=0; k<str.length; k++)
 		{
 			
 			System.out.println("=="+k);
 			s=str[k];
-			this.vm  = new InventoryNavigator(
+			this.vm  = (VirtualMachine) new InventoryNavigator(
 					si.getRootFolder()).searchManagedEntity(
 							"VirtualMachine", s);
 			continueProgram();
@@ -172,7 +173,7 @@ public class PerformanceMeasure
 				document.put("VM Name", vm.getName());
 				document.put("vCPU usage", value);
 				table.insert(document);
-				System.out.println("value inserted");
+				//System.out.println("value inserted");
 
 
 				System.out.println("Value is " + value);
@@ -185,25 +186,19 @@ public class PerformanceMeasure
 					document1.put("Id", generateRandomId());
 					document1.put("VM Name", vm.getName());
 					document1.put("vCPU usage", value);
-					table1.insert(document);
+					document1.put("VM IP", vm.getGuest().getIpAddress());
+					table1.insert(document1);
 					System.out.println("value inserted");
-
+					
+					
+					
 					ScaleOut.scaleOut();
 				}
-
-				/*		else
-				{
-					System.out.println("Clone VM TASK WILL BE PERFORMED NOW");
-					System.out.println();
-
-				//	Clone.clone(vm.getName());
-				}*/
-
 			}
 
 
 		} catch (Exception e) {
-			//System.out.println("error in print perf " + e.getMessage());
+			
 		}
 	}
 
