@@ -80,7 +80,7 @@
 							class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
 					<li><a href="/controller/performance"><i
 							class="fa fa-fw fa-bar-chart-o"></i> Charts</a></li>
-					<li><a href="bootstrap-elements.html"><i
+					<li><a href="/controller/postman"><i
 							class="fa fa-fw fa-desktop"></i>Postman</a></li>
 				</ul>
 			</div>

@@ -28,6 +28,7 @@ import com.google.gson.stream.JsonReader;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
 import edu.sjsu.cmpe283.util.MongoDBConnection;
@@ -35,12 +36,17 @@ import edu.sjsu.cmpe283.util.MongoDBConnection;
 public class Postman {
 
 	private static HttpClient client = new DefaultHttpClient();
-	private long counter=0;
+	private long requestCounter=1;
 	@RequestMapping(value = "/postman",  method=RequestMethod.GET)
 	public String home() {
-
-
-
+		
+		
+		
+		
+		
+		
+		
+		
 		return "postman";
 	}	
 
@@ -53,20 +59,57 @@ public class Postman {
 		{
 			url = "http://"+url;
 		}
+		url = formURL(url.trim());
+	
+		
+		
 		m.addObject("response", getMethodResponse(req, url, method));
 		return m;
 	}	
-	private String getServer()
+	private String formURL(String url)
+	{
+		StringBuffer urlBuilder = new StringBuffer("http://");
+		String[] sequences = url.split("/");
+		String ipAndPort = sequences[2];
+		String[] newSequences = null;
+		newSequences = ipAndPort.split(":");
+		
+		String newIp = getForwardingServer();
+		String port = newSequences[1];
+		urlBuilder.append(newIp);
+		urlBuilder.append(":"+port);
+		for(int i =3;i<sequences.length;i++)
+		{
+			urlBuilder.append("/"+sequences[i]);
+		}
+		requestCounter++;
+		return urlBuilder.toString();
+	}
+
+	private String getForwardingServer()
 	{
 		
-		/*DBCollection collec = MongoDBConnection.db.getCollection("healthyvm");
-		DBCursor cursor = collec.find();*/
+		DBCollection collec = MongoDBConnection.db.getCollection("healthyvm");
+		long allHealthyCount = collec.count();
 		
-		return "";
+		long val = (requestCounter % allHealthyCount)+1;
+		DBCursor cursor = collec.find();
+		DBObject obj = null;
+		while(val>0)
+		{
+			obj = cursor.next();
+			val--;
+		}
+		System.out.println(obj.get("_id"));
+		System.out.println(obj.get("vCPU usage"));
+		return (String)obj.get("VM IP");
+		
 	}
 	public static String getMethodResponse(String body,String url,String method)
 	{ 
+	
 
+		
 		HttpGet request = null;
 		HttpPost post = null;
 		HttpPut putObj = null;
