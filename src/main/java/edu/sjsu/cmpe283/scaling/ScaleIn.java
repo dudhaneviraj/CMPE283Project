@@ -26,12 +26,12 @@ public class ScaleIn
 	{
 		
 		// Iterate over the hashmap and count the no. of instances whose values are in the range of HTu and TSu
-		// if the count is greater then or equal to the number of majority Healthy VMs
+		// if the count is gte the number of majority Healthy VMs
 		// then scale out
 		int count =0;
 		db = MongoDBConnection.db;
 		long countOfAllVM = db.getCollection("allvm").count();
-		
+		long countOfHealthyVM = db.getCollection("healthyvm").count();
 		long majorityOfHealthyVM = (long) (countOfAllVM/2)+1;
 		for(String vmName: vmCpuUsage.keySet())
 		{
@@ -42,42 +42,48 @@ public class ScaleIn
 		}
 		if(count>=majorityOfHealthyVM)
 		{
-			//perform scale in
-			BasicDBObject query = new BasicDBObject("vCPU usage", new BasicDBObject("$lte", LOWER_THRESHOLD));
-			DBObject obj = db.getCollection("healthyvm").findOne(query);
-			
-			String vmName = (String) obj.get("VM Name");
-			ManagedEntity entity =  new InventoryNavigator(si.getRootFolder()).searchManagedEntity("VirtualMachine", vmName);
-			
-			VirtualMachine vm = (VirtualMachine) entity;
-			
-			//power off and remove from healthy and all
-			vm.unregisterVM();
-			
-			query =null;
-			query = new BasicDBObject("VM Name", vm.getName());
-			DBCollection table1 = MongoDBConnection.db.getCollection("healthyvm");
-			DBCursor cursor = table1.find(query);
-			
-			DBCollection table2 = MongoDBConnection.db.getCollection("allvm");
-			
-			DBCursor cursor2 = table1.find(query);
-			if(cursor.hasNext())
+			// always ensure that atleast 2 VM are healthy to serve requests.
+			if(countOfHealthyVM>2)
 			{
-				//remove
-				table1.remove(cursor.next());
+				//perform scale in
+				BasicDBObject query = new BasicDBObject("vCPU usage", new BasicDBObject("$lte", LOWER_THRESHOLD));
+				DBObject obj = db.getCollection("healthyvm").findOne(query);
+				
+				String vmName = (String) obj.get("VM Name");
+				ManagedEntity entity =  new InventoryNavigator(si.getRootFolder()).searchManagedEntity("VirtualMachine", vmName);
+				
+				VirtualMachine vm = (VirtualMachine) entity;
+				
+				//power off and remove from healthy and all
+				vm.unregisterVM();
+				
+				query =null;
+				query = new BasicDBObject("VM Name", vm.getName());
+				DBCollection table1 = MongoDBConnection.db.getCollection("healthyvm");
+				DBCursor cursor = table1.find(query);
+				
+				DBCollection table2 = MongoDBConnection.db.getCollection("allvm");
+				
+				DBCursor cursor2 = table1.find(query);
+				if(cursor.hasNext())
+				{
+					//remove
+					table1.remove(cursor.next());
+				}
+				else
+				{
+						
+				}
+				if(cursor2.hasNext())
+				{
+					//remove
+					table2.remove(cursor.next());
+				}
+				//vmCpuUsage.put(vm.getName(), Integer.parseInt(value));
+			cursor.close();
+			cursor2.close();
 			}
-			else
-			{
-					
-			}
-			if(cursor2.hasNext())
-			{
-				//remove
-				table2.remove(cursor.next());
-			}
-		cursor.close();
-		cursor2.close();
+			
 		}
 		else
 		{

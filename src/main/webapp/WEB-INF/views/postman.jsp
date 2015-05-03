@@ -12,7 +12,52 @@
 <title>VMware Manager</title>
 
 
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 
+
+
+<script> 
+$(document).ready(function(){
+    $("#method").change(function(){
+	if($( "#method option:selected" ).text()=='GET')
+	{
+		$("#req").slideUp("slow");
+	}
+	else
+	{
+		$("#req").slideDown("slow");
+	}
+    });
+    
+    
+    $("#url").focus(function(){
+    	if(!$("#url"))
+    	{
+    		$("#send").prop("disabled",true);
+    	}
+    	else
+    	{
+    		$("#send").prop("disabled",false);
+    	}
+        });
+       
+    $("#url").blur(function(){
+   	
+    	if(!$("#url"))
+    	{
+    		$("#send").prop("disabled",true);
+    	}
+    	else
+    	{
+    		$("#send").prop("disabled",false);
+    	}
+    	
+       });
+      
+    
+});
+</script>
 
 <!-- Optional theme -->
 <link rel="stylesheet"
@@ -94,17 +139,13 @@
 				<!-- Page Heading -->
 				<div class="row">
 					<div class="col-lg-12">
-						<h1 class="page-header">Postman</h1>
-						<ol class="breadcrumb">
-							<li><i class="fa fa-dashboard"></i> <a
-								href="/controller/vmdata">Dashboard</a></li>
-						</ol>
+						<h1 class="page-header">Load Balancer</h1>
 					</div>
 				</div>
 				<!-- /.row -->
 
 				<div class="row">
-					<form name="postmanForm" action="/controller/send" method="post">
+					<form id = "postmanForm" name="postmanForm" action="/controller/send" method="post" novalidate="novalidate">
 						<div class="col-lg-9">
 							<div class="form-group">
 								<label>Enter URL Here</label> <input id="url" name="url"
@@ -115,16 +156,11 @@
 						<div class="col-lg-3">
 							<div class="form-group">
 								<label>Select Method</label> <select id="method" name="method"
-									onchange="if (this.options[this.selectedIndex].value =='GET')
-								 {
-								 document.getElementById('req').style.visibility='hidden'
-								 }
-								 else {
-								 document.getElementById('req').style.visibility='visible'
-								 };"
 									class="form-control">
-									<option value="GET">GET</option>
+									
+									
 									<option value="POST">POST</option>
+									<option value="GET">GET</option>
 									<option value="PUT">PUT</option>
 									<option value="DELETE">DELETE</option>
 								</select>
@@ -144,7 +180,7 @@
 								<textarea id="request" name="request" class="form-control"
 									rows="8"></textarea>
 							</div>
-							<button id="send" name="send" type="submit"
+							<button id="send" name="send" type="submit" disabled="true"
 								class="btn btn-primary">Send</button>
 							<button id="reset" name="reset" type="reset"
 								class="btn btn-primary">Reset</button>
