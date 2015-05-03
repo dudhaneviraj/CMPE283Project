@@ -76,7 +76,6 @@ public class ScaleIn
 				//remove
 				table2.remove(cursor.next());
 			}
-			//vmCpuUsage.put(vm.getName(), Integer.parseInt(value));
 		cursor.close();
 		cursor2.close();
 		}

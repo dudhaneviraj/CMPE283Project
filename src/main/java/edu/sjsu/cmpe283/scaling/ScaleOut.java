@@ -33,8 +33,6 @@ public class ScaleOut
 		// Iterate over the hashmap and count the no. of instances whose values are in the range of 
 		//HealhyThresholdupper and Scaleout upper threshold
 		// if the count is gte the number of majority Healthy VMs then scale out
-		
-		
 		int count=0;
 		db = MongoDBConnection.db;
 		

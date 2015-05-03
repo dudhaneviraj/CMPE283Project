@@ -47,12 +47,8 @@ public class PerformanceMeasure
 	public PerformanceMeasure(ServiceInstance si2, VirtualMachine vm) throws RemoteException, IOException 
 	{
 		si = si2;
-		
 		this.vm  = vm;
 		continueProgram();
-		
-
-
 	}
 
 	public void continueProgram() {
