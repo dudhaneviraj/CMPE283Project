@@ -20,10 +20,10 @@ import edu.sjsu.cmpe283.util.Util;
 
 public class Clone {
 
-	public static void clone(String vmname)
+	//public static boolean flag = false;
+	public static boolean clone(String vmname)
 	{
 		
-		//String vmname = "Test-VM-";
 		String cloneName = vmname+"-clone";
 		
 		try 
@@ -61,13 +61,17 @@ public class Clone {
 									{ 
 										if(task1.waitForMe()==Task.SUCCESS)
 										{
+											//flag = true;
 											TaskInfo tInfo = task1.getTaskInfo();
 											System.out.println("Clone: status = " + tInfo.getState());
-
+											return true;
+											
 										}
 										else
 										{
+											//flag=false;
 											System.out.println("Cloning Failed!");
+											return false;
 										}
 									}
 									catch(Exception e){
@@ -91,6 +95,7 @@ public class Clone {
 
 			e.printStackTrace();
 		}
+		return true;
 		
 	}
 }

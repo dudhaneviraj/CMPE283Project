@@ -72,20 +72,25 @@ public class ScaleOut
 			dbObj = null;
 			dbObj = new BasicDBObject("VM Name", vm.getName());
 			
-			//Insert clone-vm into all vm
-			DBCollection table1 = MongoDBConnection.db.getCollection("allvm");
-			BasicDBObject allvmDocument = new BasicDBObject();
-			allvmDocument.put("VM Name", vm.getName());
-			allvmDocument.put("VM IP", vm.getGuest().getIpAddress());
-			table1.insert(allvmDocument);
 			
+			if(true)
+			{
+				//Insert clone-vm into all vm
+				DBCollection table1 = MongoDBConnection.db.getCollection("allvm");
+				BasicDBObject allvmDocument = new BasicDBObject();
+				allvmDocument.put("VM Name", vm.getName());
+				allvmDocument.put("VM IP", vm.getGuest().getIpAddress());
+				table1.insert(allvmDocument);
+				
+				
+				//Insert clone-vm into healthy vm
+				DBCollection table2 = MongoDBConnection.db.getCollection("healthyvm");
+				BasicDBObject healthyvmDocument = new BasicDBObject();
+				healthyvmDocument.put("VM Name", vm.getName()+"-clone");
+				healthyvmDocument.put("VM IP", vm.getGuest().getIpAddress());
+				table2.insert(healthyvmDocument);
+			}
 			
-			//Insert clone-vm into healthy vm
-			DBCollection table2 = MongoDBConnection.db.getCollection("healthyvm");
-			BasicDBObject healthyvmDocument = new BasicDBObject();
-			healthyvmDocument.put("VM Name", vm.getName()+"-clone");
-			healthyvmDocument.put("VM IP", vm.getGuest().getIpAddress());
-			table2.insert(healthyvmDocument);
 			
 			
 		}
