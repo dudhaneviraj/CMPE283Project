@@ -17,8 +17,9 @@ public class MongoDBConnection
 		MongoClient mongoClient = null;
 		//MongoTemplate mongoConnection=null;
 		
-		//mongoClient = new MongoClient(uri);
-		mongoClient = new MongoClient("localhost",27017);
-		db = mongoClient.getDB("cmpe283");
+		mongoClient = new MongoClient(uri);
+		//mongoClient = new MongoClient("localhost",27017);
+		//db = mongoClient.getDB("cmpe283");
+		db = mongoClient.getDB("wallet");
 	}
 }
