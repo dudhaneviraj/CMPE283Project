@@ -43,8 +43,8 @@ public class ScaleOut
 		// less than or equal to upper threshold of scale out. Take the count
 		for(String vmName : vmCpuUsage.keySet())
 		{
-			if(vmCpuUsage.get(vmName) > Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_Performance")) 
-					&& vmCpuUsage.get(vmName)<=Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_ScaleOut")))
+			if(vmCpuUsage.get(vmName) < Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_Performance")) 
+					&& vmCpuUsage.get(vmName)>=Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_ScaleOut")))
 			{
 				count++;
 			}

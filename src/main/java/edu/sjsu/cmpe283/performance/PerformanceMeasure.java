@@ -39,8 +39,7 @@ public class PerformanceMeasure
 	
 
 	public static VirtualMachine vm;
-	public String[] PerfCounters = { "cpu.usage.average"/*,
-			"mem.usage.average", "net.usage.average", "disk.usage.average"*/ };
+	public String[] PerfCounters = { "cpu.usage.average"};
 	private PerformanceManager perfMgr;
 	private HashMap<Integer, PerfCounterInfo> countersInfoMap;
 	private HashMap<String, Integer> countersMap;
@@ -137,16 +136,38 @@ public class PerformanceMeasure
 					value = "0";
 				}
 
-
+				
+				
+				BasicDBObject dbObj = new BasicDBObject("VM Name", vm.getName());
 				DBCollection table = MongoDBConnection.db.getCollection("performance");
-				BasicDBObject document = new BasicDBObject();
-				value = stats.get(counterId).getValue();
-				document.put("VM Name", vm.getName());
-				document.put("vCPU usage", value);
-				table.insert(document);
+				DBCursor cursor1 = table.find(dbObj);
+				if(cursor1.hasNext())
+				{
+					BasicDBObject document = new BasicDBObject();
+					value = stats.get(counterId).getValue();
+					document.put("VM Name", vm.getName());
+					document.put("VM IP", vm.getGuest().getIpAddress());
+					//System.out.println("vm ip---" + vm.getGuest().getIpAddress());
+					document.put("vCPU usage", value);
+					BasicDBObject searchQuery = new BasicDBObject().append("VM Name", vm.getName()
+							).append("VM IP", vm.getGuest().getIpAddress());
+					table.update(searchQuery, document);
+				}
+				
+				else
+				{
+					BasicDBObject document3 = new BasicDBObject();
+					value = stats.get(counterId).getValue();
+					document3.put("VM Name", vm.getName());
+					document3.put("VM IP", vm.getGuest().getIpAddress());
+					//System.out.println("vm ip---" + vm.getGuest().getIpAddress());
+					document3.put("vCPU usage", value);
+					table.insert(document3);
+				}
+				
 				//System.out.println("value inserted");
 
-
+				//System.out.println("vm ip---" + vm.getGuest().getIpAddress());
 				System.out.println( "Vm name: " + vm.getName() + "  " + "Value is " + value);
 
 				
@@ -156,6 +177,8 @@ public class PerformanceMeasure
 				//healthy vm then don't put it in healthy vm and remove it from HVM
 				if(Integer.parseInt(value) < Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_Performance")))
 				{
+					
+					
 				
 					//check if present
 					//If not present --> insert
@@ -186,7 +209,7 @@ public class PerformanceMeasure
 					}
 					vmCpuUsage.put(vm.getName(), Integer.parseInt(value));
 				System.out.println("value inserted");
-					
+				
 					
 					// call this outside for only once
 					
@@ -220,6 +243,7 @@ public class PerformanceMeasure
 			
 				
 			}
+			
 			new Thread(new Runnable() {
 				
 				@Override
