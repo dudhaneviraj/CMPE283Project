@@ -26,7 +26,7 @@ public class ScaleIn
 	{
 		
 		// Iterate over the hashmap and count the no. of instances whose values are in the range of HTu and TSu
-		// if the count is gte the number of majority Healthy VMs
+		// if the count is greater then or equal to the number of majority Healthy VMs
 		// then scale out
 		int count =0;
 		db = MongoDBConnection.db;

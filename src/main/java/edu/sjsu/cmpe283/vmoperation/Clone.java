@@ -22,12 +22,10 @@ public class Clone {
 
 	public static void clone(String vmname)
 	{
-		int k=0;
+		
 		//String vmname = "Test-VM-";
-		String cloneName = vmname+"-clone-"+k;
-		k++;
-
-
+		String cloneName = vmname+"-clone";
+		
 		try 
 		{
 

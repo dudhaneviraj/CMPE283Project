@@ -124,7 +124,8 @@ public class PerformanceMeasure
 				stats.put(csvs[i].getId().getCounterId(), csvs[i]);
 			}
 
-			for (String counter : PerfCounters) {
+			for (String counter : PerfCounters) 
+			{
 				Integer counterId = countersMap.get(counter);
 				PerfCounterInfo pci = countersInfoMap.get(counterId);
 				String value = null;
@@ -150,11 +151,12 @@ public class PerformanceMeasure
 
 				
 				
-				//if in next ping cycle, threshold of vm is greater than upper threshold and vm is a;ready present in
+				//if in next ping cycle, threshold of vm is greater than upper threshold and 
+				//vm is already present in
 				//healthy vm then don't put it in healthy vm and remove it from HVM
 				if(Integer.parseInt(value) < upperThresholdUsage)
 				{
-					
+				
 					//check if present
 					//If not present --> insert
 					// If present --> update
@@ -189,6 +191,9 @@ public class PerformanceMeasure
 					// call this outside for only once
 					
 				}
+				
+				//If vCpu usage is greater than upper threshold and if the VM is present in 
+				//healthy vm then remove it from the healthy vm list
 				else if(Integer.parseInt(value) > upperThresholdUsage)
 				{
 					
@@ -213,9 +218,10 @@ public class PerformanceMeasure
 					// call this outside for only once
 				}
 			
-				ScaleOut.scaleOut();
-				ScaleIn.scaleIn(vmCpuUsage, si);
+				
 			}
+			ScaleOut.scaleOut(vmCpuUsage, si);
+			//ScaleIn.scaleIn(vmCpuUsage, si);
 
 
 		} catch (Exception e) {
