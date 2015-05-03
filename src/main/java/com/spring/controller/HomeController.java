@@ -61,6 +61,7 @@ public class HomeController {
 	{
 
 
+		System.out.println(WebAppInit.getProp().getProperty("lowerThreshold_ScaleIn"));
 		// get allvms
 		ServiceInstance si;
 		DBCursor cursor = null;

@@ -9,6 +9,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.spring.controller.WebAppInit;
 import com.vmware.vim25.InvalidProperty;
 import com.vmware.vim25.RuntimeFault;
 import com.vmware.vim25.mo.InventoryNavigator;
@@ -21,7 +22,6 @@ import edu.sjsu.cmpe283.util.MongoDBConnection;
 public class ScaleIn 
 {
 	public static DB db;
-	public static final int LOWER_THRESHOLD = 20; 
 	public static void scaleIn(HashMap<String, Integer> vmCpuUsage, ServiceInstance si) throws UnknownHostException, InvalidProperty, RuntimeFault, RemoteException
 	{
 		
@@ -35,7 +35,8 @@ public class ScaleIn
 		long majorityOfHealthyVM = (long) (countOfAllVM/2)+1;
 		for(String vmName: vmCpuUsage.keySet())
 		{
-			if(vmCpuUsage.get(vmName)<=LOWER_THRESHOLD)
+			if(vmCpuUsage.get(vmName)<=
+					Integer.parseInt(WebAppInit.getProp().getProperty("lowerThreshold_ScaleIn")))
 			{
 				count++;
 			}
@@ -46,7 +47,9 @@ public class ScaleIn
 			if(countOfHealthyVM>2)
 			{
 				//perform scale in
-				BasicDBObject query = new BasicDBObject("vCPU usage", new BasicDBObject("$lte", LOWER_THRESHOLD));
+				BasicDBObject query = new BasicDBObject("vCPU usage", new BasicDBObject("$lte",
+						Integer.parseInt(WebAppInit.getProp().getProperty("lowerThreshold_ScaleIn"))));
+				
 				DBObject obj = db.getCollection("healthyvm").findOne(query);
 				
 				String vmName = (String) obj.get("VM Name");

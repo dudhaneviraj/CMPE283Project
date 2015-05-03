@@ -10,6 +10,7 @@ import java.util.HashMap;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
+import com.spring.controller.WebAppInit;
 import com.vmware.vim25.PerfCounterInfo;
 import com.vmware.vim25.PerfEntityMetricBase;
 import com.vmware.vim25.PerfEntityMetricCSV;
@@ -30,7 +31,7 @@ import edu.sjsu.cmpe283.util.MongoDBConnection;
 public class PerformanceMeasure 
 {
 	//Host memory CPU usage. Need to change it later. Instead use CPU memory usage.
-	public static int upperThresholdUsage = 85;
+
 
 	
 
@@ -150,7 +151,7 @@ public class PerformanceMeasure
 				//if in next ping cycle, threshold of vm is greater than upper threshold and 
 				//vm is already present in
 				//healthy vm then don't put it in healthy vm and remove it from HVM
-				if(Integer.parseInt(value) < upperThresholdUsage)
+				if(Integer.parseInt(value) < Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_Performance")))
 				{
 				
 					//check if present
@@ -190,7 +191,7 @@ public class PerformanceMeasure
 				
 				//If vCpu usage is greater than upper threshold and if the VM is present in 
 				//healthy vm then remove it from the healthy vm list
-				else if(Integer.parseInt(value) > upperThresholdUsage)
+				else if(Integer.parseInt(value) > Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_Performance")))
 				{
 					
 					BasicDBObject query = new BasicDBObject("VM Name", vm.getName());

@@ -9,6 +9,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.spring.controller.WebAppInit;
 import com.vmware.vim25.InvalidProperty;
 import com.vmware.vim25.RuntimeFault;
 import com.vmware.vim25.mo.InventoryNavigator;
@@ -22,8 +23,7 @@ import edu.sjsu.cmpe283.vmoperation.Clone;
 public class ScaleOut 
 {
 	public static DB db;
-	public static int upperThresholdUsage_Performance = 80;
-	public static int upperThresholdUsage_ScaleOut = 95;
+	
 	
 	public static void scaleOut(HashMap<String, Integer> vmCpuUsage, ServiceInstance si) throws UnknownHostException, InvalidProperty, RuntimeFault, RemoteException
 	{
@@ -43,7 +43,8 @@ public class ScaleOut
 		// less than or equal to upper threshold of scale out. Take the count
 		for(String vmName : vmCpuUsage.keySet())
 		{
-			if(vmCpuUsage.get(vmName)>upperThresholdUsage_Performance && vmCpuUsage.get(vmName)<=upperThresholdUsage_ScaleOut)
+			if(vmCpuUsage.get(vmName) > Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_Performance")) 
+					&& vmCpuUsage.get(vmName)<=Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_ScaleOut")))
 			{
 				count++;
 			}
@@ -53,7 +54,12 @@ public class ScaleOut
 		{
 			 
 			//Scale out will be performed
-			BasicDBObject dbObj = new BasicDBObject("vCPU usage", new BasicDBObject("$gte", upperThresholdUsage_Performance));
+			BasicDBObject dbObj = new BasicDBObject("vCPU usage", new BasicDBObject("$gte",
+					Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_Performance")))
+			.append("$lte",
+					Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_ScaleOut"))));
+			
+			
 			DBObject obj = db.getCollection("healthyvm").findOne(dbObj);
 			String vmName = (String) obj.get("VM Name");
 			ManagedEntity entity =  new InventoryNavigator(
