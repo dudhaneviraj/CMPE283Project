@@ -10,6 +10,9 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+
 import edu.sjsu.cmpe283.util.MongoDBConnection;
 
 public class WebAppInit implements ServletContextListener {
@@ -39,9 +42,26 @@ public class WebAppInit implements ServletContextListener {
 			MongoDBConnection.dbConnection();
 			
 			
-		 
+				// the code to insert vm1 and vm2
+				long countOfAllVM = MongoDBConnection.db.getCollection("allvm").count();
 			
-		 input = this.getClass().getClassLoader().getResourceAsStream("/config.properties");
+				if(countOfAllVM==0)
+				{
+					DBCollection table1 = MongoDBConnection.db.getCollection("allvm");
+					BasicDBObject allvmDocument = new BasicDBObject();
+					allvmDocument.put("VM Name", "Team3Ubuntu1");
+					allvmDocument.put("VM IP", "130.65.159.97");
+					table1.insert(allvmDocument);
+					
+					allvmDocument = new BasicDBObject();
+					allvmDocument.put("VM Name", "Team3Ubuntu2");
+					allvmDocument.put("VM IP", "130.65.159.97");
+					table1.insert(allvmDocument);
+					
+					
+				}
+			
+				input = this.getClass().getClassLoader().getResourceAsStream("/config.properties");
 		 
 				// load a properties file
 				prop.load(input);
