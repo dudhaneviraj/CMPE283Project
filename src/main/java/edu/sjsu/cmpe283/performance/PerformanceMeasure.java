@@ -4,6 +4,7 @@ package edu.sjsu.cmpe283.performance;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 
@@ -11,6 +12,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.spring.controller.WebAppInit;
+import com.vmware.vim25.InvalidProperty;
 import com.vmware.vim25.PerfCounterInfo;
 import com.vmware.vim25.PerfEntityMetricBase;
 import com.vmware.vim25.PerfEntityMetricCSV;
@@ -18,6 +20,7 @@ import com.vmware.vim25.PerfMetricId;
 import com.vmware.vim25.PerfMetricSeriesCSV;
 import com.vmware.vim25.PerfProviderSummary;
 import com.vmware.vim25.PerfQuerySpec;
+import com.vmware.vim25.RuntimeFault;
 import com.vmware.vim25.mo.ManagedEntity;
 import com.vmware.vim25.mo.PerformanceManager;
 import com.vmware.vim25.mo.ServiceInstance;
@@ -217,8 +220,34 @@ public class PerformanceMeasure
 			
 				
 			}
-			ScaleOut.scaleOut(vmCpuUsage, si);
-			//ScaleIn.scaleIn(vmCpuUsage, si);
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+
+					try
+					{
+						ScaleOut.scaleOut(vmCpuUsage, si);
+						ScaleIn.scaleIn(vmCpuUsage, si);
+					}
+					catch (InvalidProperty e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (RuntimeFault e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (UnknownHostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+
+				}
+			}).start();
 
 
 		} catch (Exception e) {

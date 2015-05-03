@@ -18,7 +18,15 @@ import edu.sjsu.cmpe283.util.MongoDBConnection;
 public class WebAppInit implements ServletContextListener {
 
 	private static Properties prop = new Properties();
-	
+	private static int REQUEST_SERVER_COUNT = 1;
+	public static int getREQUEST_SERVER_COUNT() {
+		return REQUEST_SERVER_COUNT;
+	}
+
+	public static void setREQUEST_SERVER_COUNT(int rEQUEST_SERVER_COUNT) {
+		REQUEST_SERVER_COUNT = rEQUEST_SERVER_COUNT;
+	}
+
 	public static Properties getProp() {
 		return prop;
 	}
@@ -49,13 +57,13 @@ public class WebAppInit implements ServletContextListener {
 				{
 					DBCollection table1 = MongoDBConnection.db.getCollection("allvm");
 					BasicDBObject allvmDocument = new BasicDBObject();
-					allvmDocument.put("VM Name", "Team3Ubuntu1");
-					allvmDocument.put("VM IP", "130.65.159.97");
+					allvmDocument.put("VM Name", "Team3_Req_Server"+ REQUEST_SERVER_COUNT++);
+					allvmDocument.put("VM IP", "130.65.159.158");
 					table1.insert(allvmDocument);
 					
 					allvmDocument = new BasicDBObject();
-					allvmDocument.put("VM Name", "Team3Ubuntu2");
-					allvmDocument.put("VM IP", "130.65.159.97");
+					allvmDocument.put("VM Name", "Team3_Req_Server"+ REQUEST_SERVER_COUNT++);
+					allvmDocument.put("VM IP", "130.65.159.145");
 					table1.insert(allvmDocument);
 					
 					
