@@ -22,6 +22,7 @@ import com.vmware.vim25.mo.PerformanceManager;
 import com.vmware.vim25.mo.ServiceInstance;
 import com.vmware.vim25.mo.VirtualMachine;
 
+import edu.sjsu.cmpe283.scaling.ScaleIn;
 import edu.sjsu.cmpe283.scaling.ScaleOut;
 import edu.sjsu.cmpe283.util.MongoDBConnection;
 
@@ -41,7 +42,7 @@ public class PerformanceMeasure
 	private HashMap<String, Integer> countersMap;
 	private PerfMetricId[] pmis;
 	ServiceInstance si = null;
-	private HashMap<String, String> vmCpuUsage = new HashMap<String, String>();
+	private HashMap<String, Integer> vmCpuUsage = new HashMap<String, Integer>();
 	
 	public PerformanceMeasure(ServiceInstance si2, VirtualMachine vm) throws RemoteException, IOException 
 	{
@@ -181,7 +182,7 @@ public class PerformanceMeasure
 						table1.insert(document1);
 						
 					}
-					vmCpuUsage.put(vm.getName(), value);
+					vmCpuUsage.put(vm.getName(), Integer.parseInt(value));
 				System.out.println("value inserted");
 					
 					
@@ -199,20 +200,21 @@ public class PerformanceMeasure
 					{
 						//remove
 						table1.remove(cursor.next());
-						cursor.close();
+						
 					}
 					else
 					{
 							
 					}
-					vmCpuUsage.put(vm.getName(), value);
+					//vmCpuUsage.put(vm.getName(), Integer.parseInt(value));
 				System.out.println("value inserted");
-					
+				cursor.close();	
 					
 					// call this outside for only once
 				}
 			
 				ScaleOut.scaleOut();
+				ScaleIn.scaleIn(vmCpuUsage, si);
 			}
 
 
