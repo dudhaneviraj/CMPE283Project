@@ -102,6 +102,8 @@ public class Postman {
 		}
 		System.out.println(obj.get("_id"));
 		System.out.println(obj.get("vCPU usage"));
+		
+		cursor.close();
 		return (String)obj.get("VM IP");
 		
 	}

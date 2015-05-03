@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.vmware.vim25.PerfCounterInfo;
 import com.vmware.vim25.PerfEntityMetricBase;
 import com.vmware.vim25.PerfEntityMetricCSV;
@@ -40,7 +41,7 @@ public class PerformanceMeasure
 	private HashMap<String, Integer> countersMap;
 	private PerfMetricId[] pmis;
 	ServiceInstance si = null;
-
+	private HashMap<String, String> vmCpuUsage = new HashMap<String, String>();
 	
 	public PerformanceMeasure(ServiceInstance si2, VirtualMachine vm) throws RemoteException, IOException 
 	{
@@ -144,7 +145,7 @@ public class PerformanceMeasure
 				//System.out.println("value inserted");
 
 
-				System.out.println("Value is " + value);
+				System.out.println( "Vm name: " + vm.getName() + "  " + "Value is " + value);
 
 				
 				
@@ -156,22 +157,62 @@ public class PerformanceMeasure
 					//check if present
 					//If not present --> insert
 					// If present --> update
+					BasicDBObject query = new BasicDBObject("VM Name", vm.getName());
 					DBCollection table1 = MongoDBConnection.db.getCollection("healthyvm");
-					BasicDBObject document1 = new BasicDBObject();
-					value = stats.get(counterId).getValue();
-					document1.put("VM Name", vm.getName());
-					 
-				
-					//store vcpu usage and vmname in hashmap
-					document1.put("vCPU usage", value);
-					document1.put("VM IP", vm.getGuest().getIpAddress());
-					table1.insert(document1);
-					System.out.println("value inserted");
+					
+					DBCursor cursor = table1.find(query);
+					if(cursor.hasNext())
+					{
+						BasicDBObject newDocument = new BasicDBObject();
+						newDocument.put("vCPU usage", value);
+						newDocument.put("VM Name", vm.getName());
+						newDocument.put("VM IP", vm.getGuest().getIpAddress());
+						BasicDBObject searchQuery = new BasicDBObject().append("VM Name", vm.getName());
+						table1.update(searchQuery, newDocument);
+					}
+					else
+					{
+						BasicDBObject document1 = new BasicDBObject();
+						value = stats.get(counterId).getValue();
+						document1.put("VM Name", vm.getName());
+						//store vcpu usage and vmname in hashmap
+						document1.put("vCPU usage", value);
+						document1.put("VM IP", vm.getGuest().getIpAddress());
+						table1.insert(document1);
+						
+					}
+					vmCpuUsage.put(vm.getName(), value);
+				System.out.println("value inserted");
 					
 					
 					// call this outside for only once
-					ScaleOut.scaleOut();
+					
 				}
+				else if(Integer.parseInt(value) > upperThresholdUsage)
+				{
+					
+					BasicDBObject query = new BasicDBObject("VM Name", vm.getName());
+					DBCollection table1 = MongoDBConnection.db.getCollection("healthyvm");
+					
+					DBCursor cursor = table1.find(query);
+					if(cursor.hasNext())
+					{
+						//remove
+						table1.remove(cursor.next());
+						cursor.close();
+					}
+					else
+					{
+							
+					}
+					vmCpuUsage.put(vm.getName(), value);
+				System.out.println("value inserted");
+					
+					
+					// call this outside for only once
+				}
+			
+				ScaleOut.scaleOut();
 			}
 
 
