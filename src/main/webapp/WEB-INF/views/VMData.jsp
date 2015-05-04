@@ -28,6 +28,7 @@
 	margin: 0;
 	padding: 0;
 }
+
 body {
 	background: url(../images/noise_light-grey.jpg);
 	font-family: 'Helvetica Neue', arial, sans-serif;
@@ -166,15 +167,6 @@ hr {
 </style>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
-	// Load the Visualization API and the piechart package.
-	google.load("visualization", "1", {
-		packages : [ "corechart" ]
-	});
-	// Set a callback to run when the Google Visualization API is loaded.
-	google.setOnLoadCallback(drawChart);
-	// Callback that creates and populates a data table,
-	// instantiates the pie chart, passes in the data and
-	// draws it.
 	var cpu = new Array();
 
 	<c:forEach items="${cpu}" var="vi">
@@ -190,33 +182,66 @@ hr {
 	VMList.push(temp);
 	</c:forEach>
 
-	//for vcpu usage
+	google.load("visualization", "1.1", {
+		packages : [ "bar" ]
+	});
+	google.setOnLoadCallback(drawStuff);
 
-	function drawChart() {
-		// Create the data table.
+	function drawStuff() {
 
+		var tmp = new Array();
+
+		var tmp1=new Array();
+		tmp1.push('Virtual Machines');
+		tmp1.push('Percentage');
+		
+		
+
+		tmp.push(tmp1);
 		var arrayLength = VMList.length;
-		var c = cpu.length;
 		for (var i = 0; i < arrayLength; i++) {
+
+			var tmp1 = new Array();
 			var e = parseFloat(cpu[i]);
-			var data = new google.visualization.DataTable();
-			data.addColumn('string', 'Topping');
-			data.addColumn('number', 'Slices');
-			data.addRows([ [ 'Free', e ], [ 'Used', 100 - e ] ]);
-			// Set chart options
-			var options = {
-				'title' : '' + VMList[i] + ' vCPU Utilization',
-				is3D : true,
-				'width' : 400,
-				'height' : 300
-			};
-			// Instantiate and draw our chart, passing in some options.
-			var chart = new google.visualization.PieChart(document
-					.getElementById(VMList[i]));
-			chart.draw(data, options);
+			tmp1.push(VMList[i]);
+			tmp1.push(e);
+			
+			tmp.push(tmp1);
 		}
-	}
+
+		var data = new google.visualization.arrayToDataTable(tmp);
+
+		var options = {
+			title : 'System Virtual Machine Summary',
+			width : 400,
+			legend : {
+				position : 'none'
+			},
+			chart : {
+				title : 'System Virtual Machine Summary',
+				subtitle : 'CPU Usage By percentage'
+			},
+			bars : 'vertical', // Required for Material Bar Charts.
+			axes : {
+				x : {
+					0 : {
+						side : 'bottom',
+						label : 'Percentage'
+					}
+					
+				// Top x-axis.
+				}
+			},
+			bar : {
+				groupWidth : "30%"
+			}
+		};
+
+		var chart = new google.charts.Bar(document.getElementById('top_x_div'));
+		chart.draw(data, options);
+	};
 </script>
+
 <!-- Optional theme -->
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -300,13 +325,12 @@ hr {
 					</div>
 				</div>
 				<!-- /.row -->
-				<c:forEach var="listValue" items="${VM}" varStatus="status">
-					<div class="col-xs-12" onload="javascript:drawChart()">
-						<div class="col-xs-3">
-							<br><br>
-							<div id="${listValue}" class="chart_div"></div>
-						</div>
-						<div class="col-xs-9">
+				<div id="top_x_div" onload="javascript:drawStuff()"
+					style="width: 900px; height: 500px;"></div>
+
+
+
+								<div class="col-xs-12">
 							<div class="wrapper">
 								<div class="table-container">
 									<table class="responsive-stacked-table">
@@ -322,26 +346,21 @@ hr {
 													<div class="table-container">
 														<table class="responsive-stacked-table">
 															<thead>
+
 																<tr>
 																	<th>IP Address</th>
 																	<th>VM Name</th>
-																	<th>VM Memory Usage</th>
-																	<th>Max CPU Usage</th>
-																	<th>VM CPU Utilization</th>
-																	<th>Host memory Usage</th>
 																	<th>CPU Usage %</th>
 																</tr>
 															</thead>
 															<tbody>
+																																				<c:forEach var="listValue" items="${VM}" varStatus="status">
 																<tr>
-																	<td> ${ipaddr[status.index]}</td>
+																	<td>${ipaddr[status.index]}</td>
 																	<td>${listValue}</td>
-																	<td>V-20</td>
-																	<td>2399</td>
-																	<td>${cpu[status.index]}</td>
-																	<td>282</td>
 																	<td>${cpu[status.index]}</td>
 																</tr>
+																				</c:forEach>
 															</tbody>
 														</table>
 													</div></td>
@@ -350,9 +369,9 @@ hr {
 									</table>
 								</div>
 							</div>
-						</div>
+						
 					</div>
-				</c:forEach>
+
 				<div class="col-xs-12"></div>
 			</div>
 			<!-- /.row -->

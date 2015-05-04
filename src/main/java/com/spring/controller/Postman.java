@@ -118,9 +118,6 @@ public class Postman {
 	}
 	public static String getMethodResponse(String body,String url,String method)
 	{ 
-	
-
-		
 		HttpGet request = null;
 		HttpPost post = null;
 		HttpPut putObj = null;

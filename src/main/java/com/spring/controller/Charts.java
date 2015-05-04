@@ -34,8 +34,7 @@ public class Charts {
 			vm.add(ob.get("VM Name").toString());
 			vCPU.add(ob.get("vCPU usage").toString());
 			iP.add(ob.get("VM IP").toString());
-		}
-		
+		}		
 		vm.add("VM1");
 		vm.add("VM2");
 		vm.add("VM3");
@@ -45,7 +44,7 @@ public class Charts {
 		iP.add("192.168.10.12");
 		iP.add("192.168.10.12");
 		iP.add("192.168.10.12");
-		// Adding Attrbutes
+		// Adding Attributes
 		m.addObject("VM", vm);
 		m.addObject("cpu", vCPU);
 		m.addObject("ipaddr", iP);
@@ -55,7 +54,7 @@ public class Charts {
 	@RequestMapping(value = "/vmdata", method = RequestMethod.GET)
 	public ModelAndView getVMInfo()throws Exception
 	{
-		ModelAndView m=new ModelAndView("VMdata");
+		ModelAndView m=new ModelAndView("VMData");
 		ArrayList<String>  vm=new ArrayList<String>();
 		ArrayList<String> vCPU=new ArrayList<String>();
 		ArrayList<String> iP=new ArrayList<String>();
