@@ -59,14 +59,21 @@ public class Postman {
 		{
 			url = "http://"+url;
 		}
-		url = formURL(url.trim());
+		
+		ArrayList<String> vm_Info = new ArrayList<String>();
+		
+		String forwardingIp = getForwardingServer(vm_Info);
+		url = formURL(url.trim(),forwardingIp);
 	
 		
 		
 		m.addObject("response", getMethodResponse(req, url, method));
+		m.addObject("response_from", vm_Info.get(0));
+		m.addObject("response_name", vm_Info.get(1));
+		
 		return m;
 	}	
-	private String formURL(String url)
+	private String formURL(String url,String newIp)
 	{
 		StringBuffer urlBuilder = new StringBuffer("http://");
 		String[] sequences = url.split("/");
@@ -74,7 +81,6 @@ public class Postman {
 		String[] newSequences = null;
 		newSequences = ipAndPort.split(":");
 		
-		String newIp = getForwardingServer();
 		String port = newSequences[1];
 		urlBuilder.append(newIp);
 		urlBuilder.append(":"+port);
@@ -86,9 +92,8 @@ public class Postman {
 		return urlBuilder.toString();
 	}
 
-	private String getForwardingServer()
+	private String getForwardingServer(ArrayList<String> vm_Info)
 	{
-		
 		DBCollection collec = MongoDBConnection.db.getCollection("healthyvm");
 		long allHealthyCount = collec.count();
 		
@@ -103,9 +108,13 @@ public class Postman {
 		System.out.println(obj.get("_id"));
 		System.out.println(obj.get("vCPU usage"));
 		
-		cursor.close();
-		return (String)obj.get("VM IP");
+		vm_Info.add((String)obj.get("VM IP"));
+		vm_Info.add((String)obj.get("VM Name"));
 		
+		cursor.close();
+		
+		return vm_Info.get(0);
+			
 	}
 	public static String getMethodResponse(String body,String url,String method)
 	{ 
@@ -147,7 +156,6 @@ public class Postman {
 				response = client.execute(putObj);
 
 			}
-			
 			
 			rd = new BufferedReader (new InputStreamReader(response.getEntity().getContent()));
 

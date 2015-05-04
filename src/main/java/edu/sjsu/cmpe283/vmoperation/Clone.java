@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 
+import com.spring.controller.WebAppInit;
 import com.vmware.vim25.TaskInfo;
 import com.vmware.vim25.VirtualMachineCloneSpec;
 import com.vmware.vim25.VirtualMachineRelocateSpec;
@@ -24,7 +25,6 @@ public class Clone {
 	public static boolean clone(String vmname)
 	{
 		
-		String cloneName = vmname+"-clone";
 		
 		try 
 		{
@@ -47,37 +47,36 @@ public class Clone {
 							VirtualMachine vm = vms[j];
 							if(vm!=null)
 							{
-								if((vm.getName().equalsIgnoreCase(vmname+"1"))||vm.getName().equalsIgnoreCase(vmname+"2"))
-								{
-									System.out.println("Clone task beginning...");
-									System.out.println();
-									VirtualMachineCloneSpec cloneSpec =  new VirtualMachineCloneSpec();
-									cloneSpec.setLocation(new VirtualMachineRelocateSpec());
-									cloneSpec.setPowerOn(true);
-									cloneSpec.setTemplate(false);
 
-									Task task1 = vm.cloneVM_Task((Folder) vm.getParent(), cloneName, cloneSpec);
-									try
-									{ 
-										if(task1.waitForMe()==Task.SUCCESS)
-										{
-											//flag = true;
-											TaskInfo tInfo = task1.getTaskInfo();
-											System.out.println("Clone: status = " + tInfo.getState());
-											return true;
-											
-										}
-										else
-										{
-											//flag=false;
-											System.out.println("Cloning Failed!");
-											return false;
-										}
+								System.out.println("Clone task beginning...");
+								System.out.println();
+								VirtualMachineCloneSpec cloneSpec =  new VirtualMachineCloneSpec();
+								cloneSpec.setLocation(new VirtualMachineRelocateSpec());
+								cloneSpec.setPowerOn(true);
+								cloneSpec.setTemplate(false);
+
+								Task task1 = vm.cloneVM_Task((Folder) vm.getParent(), vmname, cloneSpec);
+								try
+								{ 
+									if(task1.waitForMe()==Task.SUCCESS)
+									{
+										//flag = true;
+										TaskInfo tInfo = task1.getTaskInfo();
+										System.out.println("Clone: status = " + tInfo.getState());
+										return true;
+										
 									}
-									catch(Exception e){
-										System.out.println("Clone Status: error");
+									else
+									{
+										//flag=false;
+										System.out.println("Cloning Failed!");
+										return false;
 									}
 								}
+								catch(Exception e){
+									System.out.println("Clone Status: error");
+								}
+							
 
 							}
 

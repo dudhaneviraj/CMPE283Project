@@ -18,8 +18,8 @@ public class MongoDBConnection
 		//MongoTemplate mongoConnection=null;
 		
 		mongoClient = new MongoClient(uri);
-		//mongoClient = new MongoClient("localhost",27017);
-		//db = mongoClient.getDB("cmpe283");
-		db = mongoClient.getDB("wallet");
+		mongoClient = new MongoClient("localhost",27017);
+		db = mongoClient.getDB("cmpe283");
+		//db = mongoClient.getDB("wallet");
 	}
 }

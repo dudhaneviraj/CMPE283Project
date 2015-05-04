@@ -45,12 +45,13 @@ public class PerformanceMeasure
 	private HashMap<String, Integer> countersMap;
 	private PerfMetricId[] pmis;
 	ServiceInstance si = null;
-	private HashMap<String, Integer> vmCpuUsage = new HashMap<String, Integer>();
 	
-	public PerformanceMeasure(ServiceInstance si2, VirtualMachine vm) throws RemoteException, IOException 
+	 HashMap<String, Integer> vmCpuUsage = null;
+	public PerformanceMeasure(ServiceInstance si2, VirtualMachine vm, HashMap<String, Integer> vmCpuUsage1) throws RemoteException, IOException 
 	{
 		si = si2;
 		this.vm  = vm;
+		vmCpuUsage = vmCpuUsage1;
 		continueProgram();
 	}
 
@@ -136,7 +137,9 @@ public class PerformanceMeasure
 					value = "0";
 				}
 
-				
+				int val = Integer.parseInt(value);
+				val = val/100;
+				value  = String.valueOf(val);
 				
 				BasicDBObject dbObj = new BasicDBObject("VM Name", vm.getName());
 				DBCollection table = MongoDBConnection.db.getCollection("performance");
@@ -144,11 +147,11 @@ public class PerformanceMeasure
 				if(cursor1.hasNext())
 				{
 					BasicDBObject document = new BasicDBObject();
-					value = stats.get(counterId).getValue();
+					
 					document.put("VM Name", vm.getName());
 					document.put("VM IP", vm.getGuest().getIpAddress());
 					//System.out.println("vm ip---" + vm.getGuest().getIpAddress());
-					document.put("vCPU usage", value);
+					document.put("vCPU usage", val);
 					BasicDBObject searchQuery = new BasicDBObject().append("VM Name", vm.getName()
 							).append("VM IP", vm.getGuest().getIpAddress());
 					table.update(searchQuery, document);
@@ -157,11 +160,11 @@ public class PerformanceMeasure
 				else
 				{
 					BasicDBObject document3 = new BasicDBObject();
-					value = stats.get(counterId).getValue();
+				
 					document3.put("VM Name", vm.getName());
 					document3.put("VM IP", vm.getGuest().getIpAddress());
 					//System.out.println("vm ip---" + vm.getGuest().getIpAddress());
-					document3.put("vCPU usage", value);
+					document3.put("vCPU usage", val);
 					table.insert(document3);
 				}
 				
@@ -190,7 +193,7 @@ public class PerformanceMeasure
 					if(cursor.hasNext())
 					{
 						BasicDBObject newDocument = new BasicDBObject();
-						newDocument.put("vCPU usage", value);
+						newDocument.put("vCPU usage", val);
 						newDocument.put("VM Name", vm.getName());
 						newDocument.put("VM IP", vm.getGuest().getIpAddress());
 						BasicDBObject searchQuery = new BasicDBObject().append("VM Name", vm.getName());
@@ -202,7 +205,7 @@ public class PerformanceMeasure
 						value = stats.get(counterId).getValue();
 						document1.put("VM Name", vm.getName());
 						//store vcpu usage and vmname in hashmap
-						document1.put("vCPU usage", value);
+						document1.put("vCPU usage", val);
 						document1.put("VM IP", vm.getGuest().getIpAddress());
 						table1.insert(document1);
 						
@@ -244,35 +247,7 @@ public class PerformanceMeasure
 				
 			}
 			
-			new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-
-					try
-					{
-						ScaleOut.scaleOut(vmCpuUsage, si);
-						ScaleIn.scaleIn(vmCpuUsage, si);
-					}
-					catch (InvalidProperty e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (RuntimeFault e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (UnknownHostException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-
-				}
-			}).start();
-
+			
 
 		} catch (Exception e) {
 			

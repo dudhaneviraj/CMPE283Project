@@ -3,9 +3,11 @@ package com.spring.controller;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -22,6 +24,8 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.vmware.vim25.InvalidProperty;
+import com.vmware.vim25.RuntimeFault;
 import com.vmware.vim25.mo.HostSystem;
 import com.vmware.vim25.mo.InventoryNavigator;
 import com.vmware.vim25.mo.ManagedEntity;
@@ -29,6 +33,7 @@ import com.vmware.vim25.mo.ServiceInstance;
 import com.vmware.vim25.mo.VirtualMachine;
 
 import edu.sjsu.cmpe283.performance.PerformanceMeasure;
+import edu.sjsu.cmpe283.scaling.ScaleOut;
 import edu.sjsu.cmpe283.util.MongoDBConnection;
 import edu.sjsu.cmpe283.util.Util;
 /**
@@ -40,9 +45,9 @@ import edu.sjsu.cmpe283.util.Util;
 public class HomeController {
 
 
-	
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
+	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	private HashMap<String, Integer> vmCpuUsage = new HashMap<String, Integer>();
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
@@ -63,11 +68,11 @@ public class HomeController {
 
 		System.out.println(WebAppInit.getProp().getProperty("lowerThreshold_ScaleIn"));
 		// get allvms
-		ServiceInstance si;
+		final ServiceInstance si;
 		DBCursor cursor = null;
 		try
 		{
-			
+
 			si = new ServiceInstance(new URL(Util.vCenter_Server_URL), Util.USER_NAME, Util.PASSWORD, true);
 			DBCollection collec = MongoDBConnection.db.getCollection("allvm");
 			cursor = collec.find();
@@ -80,9 +85,38 @@ public class HomeController {
 				ManagedEntity entity =  new InventoryNavigator(si.getRootFolder()).searchManagedEntity("VirtualMachine", vmName);
 
 				VirtualMachine vm = (VirtualMachine) entity;
-				PerformanceMeasure perf = new PerformanceMeasure(si , vm);
+				PerformanceMeasure perf = new PerformanceMeasure(si , vm, vmCpuUsage);
 
 			}
+			System.out.println("Test");
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+
+					try
+					{
+						ScaleOut.scaleOut(vmCpuUsage, si);
+						//ScaleIn.scaleIn(vmCpuUsage, si);
+					}
+					catch (InvalidProperty e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (RuntimeFault e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (UnknownHostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+
+				}
+			}).start();
 
 
 

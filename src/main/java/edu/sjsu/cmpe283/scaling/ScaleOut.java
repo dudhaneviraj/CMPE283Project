@@ -49,14 +49,14 @@ public class ScaleOut
 				count++;
 			}
 		}
-		
+		System.out.println("count: " + count);
 		if(count >=  majorityOfHealthyVM)
 		{
 			 
 			//Scale out will be performed
-			BasicDBObject dbObj = new BasicDBObject("vCPU usage", new BasicDBObject("$gte",
+			BasicDBObject dbObj = new BasicDBObject("vCPU usage", new BasicDBObject("$lte",
 					Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_Performance")))
-			.append("$lte",
+			.append("$gte",
 					Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_ScaleOut"))));
 			
 			
@@ -68,17 +68,23 @@ public class ScaleOut
 			
 			//Clone the VM
 			System.out.println("Clone VM TASK WILL BE PERFORMED NOW");
-			Clone.clone(vmName);
+			
+			vmName = vmName.substring(0, vmName.length()-1);
+			int counter = WebAppInit.getREQUEST_SERVER_COUNT()+1;
+			String cloneName = vmName+counter ;
+			
+			
+			boolean result = Clone.clone(cloneName);
 			dbObj = null;
 			dbObj = new BasicDBObject("VM Name", vm.getName());
 			
 			
-			if(true)
+			if(result)
 			{
 				//Insert clone-vm into all vm
 				DBCollection table1 = MongoDBConnection.db.getCollection("allvm");
 				BasicDBObject allvmDocument = new BasicDBObject();
-				allvmDocument.put("VM Name", vm.getName());
+				allvmDocument.put("VM Name", cloneName);
 				allvmDocument.put("VM IP", vm.getGuest().getIpAddress());
 				table1.insert(allvmDocument);
 				
@@ -86,7 +92,7 @@ public class ScaleOut
 				//Insert clone-vm into healthy vm
 				DBCollection table2 = MongoDBConnection.db.getCollection("healthyvm");
 				BasicDBObject healthyvmDocument = new BasicDBObject();
-				healthyvmDocument.put("VM Name", vm.getName()+"-clone");
+				healthyvmDocument.put("VM Name", cloneName);
 				healthyvmDocument.put("VM IP", vm.getGuest().getIpAddress());
 				table2.insert(healthyvmDocument);
 			}

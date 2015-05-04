@@ -178,7 +178,7 @@ $(document).ready(function(){
 							<div id="req" class="form-group">
 								<label id="request_body">Request Body</label>
 								<textarea id="request" name="request" class="form-control"
-									rows="8"></textarea>
+									rows="4"></textarea>
 							</div>
 							<button id="send" name="send" type="submit" disabled="true"
 								class="btn btn-primary">Send</button>
@@ -198,6 +198,28 @@ $(document).ready(function(){
 							<textarea id="response" name="response" class="form-control"
 								rows="8">${response}</textarea>
 
+						</div>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-lg-3">
+						<br>
+
+						<div class="form-group">
+							<label>Responding VM IP</label><br>
+							<input id="response_from" name="response_from"
+									class="form-control" disabled="true">${response_from}</input>
+						</div>
+					</div>
+					
+					<div class="col-lg-3">
+						<br>
+
+						<div class="form-group">
+							<label>Responding VM Name</label><br>
+							<input id="response_name" name="response_name"
+									class="form-control" disabled="true">${response_name}</input>
 						</div>
 					</div>
 				</div>
