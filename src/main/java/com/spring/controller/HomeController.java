@@ -47,7 +47,7 @@ public class HomeController {
 
 
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-	private HashMap<String, Integer> vmCpuUsage = new HashMap<String, Integer>();
+	
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
@@ -60,91 +60,6 @@ public class HomeController {
 		model.addAttribute("serverTime", formattedDate );		
 		return "home";
 	}		
-	//10 seconds
-	@Scheduled(fixedDelay=10000)
-	public void schedule()
-	{
 
-
-		System.out.println(WebAppInit.getProp().getProperty("lowerThreshold_ScaleIn"));
-		// get allvms
-		final ServiceInstance si;
-		DBCursor cursor = null;
-		try
-		{
-
-			si = new ServiceInstance(new URL(Util.vCenter_Server_URL), Util.USER_NAME, Util.PASSWORD, true);
-			DBCollection collec = MongoDBConnection.db.getCollection("allvm");
-			cursor = collec.find();
-
-			while(cursor.hasNext())
-			{
-				DBObject obj = cursor.next();
-				String vmName = (String) obj.get("VM Name");
-
-				ManagedEntity entity =  new InventoryNavigator(si.getRootFolder()).searchManagedEntity("VirtualMachine", vmName);
-
-				VirtualMachine vm = (VirtualMachine) entity;
-				PerformanceMeasure perf = new PerformanceMeasure(si , vm, vmCpuUsage);
-
-			}
-			System.out.println("Test");
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-
-					try
-					{
-						ScaleOut.scaleOut(vmCpuUsage, si);
-						//ScaleIn.scaleIn(vmCpuUsage, si);
-					}
-					catch (InvalidProperty e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (RuntimeFault e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (UnknownHostException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-
-				}
-			}).start();
-
-
-
-		}
-		catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		finally
-		{
-			cursor.close();
-		}
-
-
-
-
-		/*-----------------*/
-
-
-		System.out.print("\n");	
-
-
-	}
 
 }
