@@ -7,7 +7,6 @@ import java.util.HashMap;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.spring.controller.WebAppInit;
 import com.vmware.vim25.InvalidProperty;

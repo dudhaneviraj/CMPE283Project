@@ -224,39 +224,8 @@ public class Postman {
 		return prettyJsonString;
 	}
 
-	@RequestMapping(value = "/performance", method = RequestMethod.GET)
-	public ModelAndView getPerformance()throws Exception
-	{
-		ModelAndView m=new ModelAndView("performance");
-		//DBCollection col=getCollection("");
-		ArrayList<String>  vm=new ArrayList<String>();
-		vm.add("VM1");
-		vm.add("VM2");
-		ArrayList<String> vCPU=new ArrayList<String>();	
-		vCPU.add("88");
-		vCPU.add("74");
-		m.addObject("VM", vm);
-		m.addObject("cpu", vCPU);
-		return m;
-	}
-
-	@RequestMapping(value = "/vmdata", method = RequestMethod.GET)
-	public ModelAndView getVMInfo()throws Exception
-	{
-		ModelAndView m=new ModelAndView("VMdata");
-		DBCollection col=getCollection("");
-		return m;						
-	}
 
 
 
 
-	public static DBCollection getCollection(String collection)throws Exception
-	{
-		MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
-		DB db = mongoClient.getDB( "" );
-		System.out.println("Connect to database successfully");
-		return db.getCollection(collection);
-
-	}
 }
