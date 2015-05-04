@@ -1,7 +1,5 @@
 package com.spring.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
@@ -18,14 +16,8 @@ import edu.sjsu.cmpe283.util.MongoDBConnection;
 public class WebAppInit implements ServletContextListener {
 
 	private static Properties prop = new Properties();
-	private static int REQUEST_SERVER_COUNT = 1;
-	public static int getREQUEST_SERVER_COUNT() {
-		return REQUEST_SERVER_COUNT;
-	}
-
-	public static void setREQUEST_SERVER_COUNT(int rEQUEST_SERVER_COUNT) {
-		REQUEST_SERVER_COUNT = rEQUEST_SERVER_COUNT;
-	}
+	public static int REQUEST_SERVER_COUNT = 1;
+	
 
 	public static Properties getProp() {
 		return prop;
@@ -67,6 +59,10 @@ public class WebAppInit implements ServletContextListener {
 					table1.insert(allvmDocument);
 					
 					
+				}
+				else
+				{
+					REQUEST_SERVER_COUNT = 2;
 				}
 			
 				input = this.getClass().getClassLoader().getResourceAsStream("/config.properties");

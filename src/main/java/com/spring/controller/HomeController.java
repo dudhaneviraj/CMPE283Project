@@ -3,7 +3,6 @@ package com.spring.controller;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.util.Date;
@@ -20,20 +19,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.vmware.vim25.InvalidProperty;
-import com.vmware.vim25.RuntimeFault;
-import com.vmware.vim25.mo.HostSystem;
 import com.vmware.vim25.mo.InventoryNavigator;
 import com.vmware.vim25.mo.ManagedEntity;
 import com.vmware.vim25.mo.ServiceInstance;
 import com.vmware.vim25.mo.VirtualMachine;
 
 import edu.sjsu.cmpe283.performance.PerformanceMeasure;
-import edu.sjsu.cmpe283.scaling.ScaleOut;
+import edu.sjsu.cmpe283.scaling.ScaleIn;
 import edu.sjsu.cmpe283.util.MongoDBConnection;
 import edu.sjsu.cmpe283.util.Util;
 /**
@@ -89,37 +84,10 @@ public class HomeController {
 
 			}
 			System.out.println("Test");
-			new Thread(new Runnable() {
+			
 
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-
-					try
-					{
-						ScaleOut.scaleOut(vmCpuUsage, si);
-						//ScaleIn.scaleIn(vmCpuUsage, si);
-					}
-					catch (InvalidProperty e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (RuntimeFault e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (UnknownHostException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-
-				}
-			}).start();
-
-
-
+			//ScaleOut.scaleOut(vmCpuUsage, si);
+			ScaleIn.scaleIn(vmCpuUsage, si);
 		}
 		catch (RemoteException e) {
 			// TODO Auto-generated catch block

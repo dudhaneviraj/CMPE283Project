@@ -70,22 +70,27 @@ public class ScaleOut
 			System.out.println("Clone VM TASK WILL BE PERFORMED NOW");
 			
 			vmName = vmName.substring(0, vmName.length()-1);
-			int counter = WebAppInit.getREQUEST_SERVER_COUNT()+1;
-			String cloneName = vmName+counter ;
+			
+			String cloneName = vmName + (WebAppInit.REQUEST_SERVER_COUNT++);
 			
 			
-			boolean result = Clone.clone(cloneName);
+			boolean result = Clone.clone(vm,cloneName);
 			dbObj = null;
 			dbObj = new BasicDBObject("VM Name", vm.getName());
 			
 			
 			if(result)
 			{
+				
+				ManagedEntity cloneEntity =  new InventoryNavigator(
+						si.getRootFolder()).searchManagedEntity("VirtualMachine", cloneName);
+				VirtualMachine clonedVm = (VirtualMachine) cloneEntity;
+				
 				//Insert clone-vm into all vm
 				DBCollection table1 = MongoDBConnection.db.getCollection("allvm");
 				BasicDBObject allvmDocument = new BasicDBObject();
 				allvmDocument.put("VM Name", cloneName);
-				allvmDocument.put("VM IP", vm.getGuest().getIpAddress());
+				allvmDocument.put("VM IP", clonedVm.getGuest().getIpAddress());
 				table1.insert(allvmDocument);
 				
 				
@@ -93,7 +98,7 @@ public class ScaleOut
 				DBCollection table2 = MongoDBConnection.db.getCollection("healthyvm");
 				BasicDBObject healthyvmDocument = new BasicDBObject();
 				healthyvmDocument.put("VM Name", cloneName);
-				healthyvmDocument.put("VM IP", vm.getGuest().getIpAddress());
+				healthyvmDocument.put("VM IP", clonedVm.getGuest().getIpAddress());
 				table2.insert(healthyvmDocument);
 			}
 			

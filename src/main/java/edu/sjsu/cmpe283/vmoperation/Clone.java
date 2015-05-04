@@ -1,100 +1,49 @@
 package edu.sjsu.cmpe283.vmoperation;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.rmi.RemoteException;
-
-import com.spring.controller.WebAppInit;
-import com.vmware.vim25.TaskInfo;
+import com.vmware.vim25.TaskInfoState;
 import com.vmware.vim25.VirtualMachineCloneSpec;
 import com.vmware.vim25.VirtualMachineRelocateSpec;
 import com.vmware.vim25.mo.Folder;
-import com.vmware.vim25.mo.HostSystem;
-import com.vmware.vim25.mo.InventoryNavigator;
-import com.vmware.vim25.mo.ManagedEntity;
-import com.vmware.vim25.mo.ServiceInstance;
 import com.vmware.vim25.mo.Task;
 import com.vmware.vim25.mo.VirtualMachine;
-
-import edu.sjsu.cmpe283.util.Util;
 
 public class Clone {
 
 	//public static boolean flag = false;
-	public static boolean clone(String vmname)
+	
+	
+	public static boolean clone(VirtualMachine vm,String vmname)
 	{
-		
-		
-		try 
-		{
+		  VirtualMachineCloneSpec spec = new VirtualMachineCloneSpec();
+          VirtualMachineRelocateSpec vmrs = new VirtualMachineRelocateSpec();
+          
+          spec.setPowerOn(true);
+          spec.setTemplate(false);
+          spec.setLocation(vmrs);
 
-			ServiceInstance si = new ServiceInstance(new URL(Util.vCenter_Server_URL), Util.USER_NAME, Util.PASSWORD, true);
+          try {
+        	  System.out.println("Performing Cloning...");
+                Folder parent = (Folder) vm.getParent();
+                Task task = vm.cloneVM_Task(parent,vmname , spec);
 
-			ManagedEntity[] hosts = new InventoryNavigator(si.getRootFolder()).searchManagedEntities("HostSystem");
-
-			for(int i=0; i<hosts.length; i++) 
-			{
-				HostSystem host = (HostSystem) hosts[i];
-				if(host!=null)
-				{
-
-					if(host.getName()!=null)
-					{
-						VirtualMachine vms[] = host.getVms();
-						for(int j=0; j<vms.length; j++)
-						{
-							VirtualMachine vm = vms[j];
-							if(vm!=null)
-							{
-
-								System.out.println("Clone task beginning...");
-								System.out.println();
-								VirtualMachineCloneSpec cloneSpec =  new VirtualMachineCloneSpec();
-								cloneSpec.setLocation(new VirtualMachineRelocateSpec());
-								cloneSpec.setPowerOn(true);
-								cloneSpec.setTemplate(false);
-
-								Task task1 = vm.cloneVM_Task((Folder) vm.getParent(), vmname, cloneSpec);
-								try
-								{ 
-									if(task1.waitForMe()==Task.SUCCESS)
-									{
-										//flag = true;
-										TaskInfo tInfo = task1.getTaskInfo();
-										System.out.println("Clone: status = " + tInfo.getState());
-										return true;
-										
-									}
-									else
-									{
-										//flag=false;
-										System.out.println("Cloning Failed!");
-										return false;
-									}
-								}
-								catch(Exception e){
-									System.out.println("Clone Status: error");
-								}
-							
-
-							}
-
-						}
-
-					}
-				}
-			}
-
-		} catch (RemoteException e) 
-		{
-			e.printStackTrace();
-		} catch (MalformedURLException e) 
-		{
-
-			e.printStackTrace();
-		}
-		return true;
-		
+                task.waitForTask();
+                if (task.getTaskInfo().getState() == TaskInfoState.error) {
+                      System.out.println("Error cloning Virtual Machine");
+                      System.out.println("Reason: " + task.getTaskInfo().getError().localizedMessage);
+                      return false;
+                }
+                if (task.getTaskInfo().getState() == TaskInfoState.success) {
+                      System.out.println("Cloning  successful.");
+                      System.out.println("---------------------------------------------------------------");
+                      return true;
+                }
+          } catch (Exception e) {
+                System.out.println("Exception while cloning: " + e);
+          }
+          return false;
 	}
+	
+	
+	
+
 }

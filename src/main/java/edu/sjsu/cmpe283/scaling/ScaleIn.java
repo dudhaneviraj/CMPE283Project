@@ -12,9 +12,11 @@ import com.mongodb.DBObject;
 import com.spring.controller.WebAppInit;
 import com.vmware.vim25.InvalidProperty;
 import com.vmware.vim25.RuntimeFault;
+import com.vmware.vim25.TaskInfoState;
 import com.vmware.vim25.mo.InventoryNavigator;
 import com.vmware.vim25.mo.ManagedEntity;
 import com.vmware.vim25.mo.ServiceInstance;
+import com.vmware.vim25.mo.Task;
 import com.vmware.vim25.mo.VirtualMachine;
 
 import edu.sjsu.cmpe283.util.MongoDBConnection;
@@ -58,33 +60,59 @@ public class ScaleIn
 				VirtualMachine vm = (VirtualMachine) entity;
 				
 				//power off and remove from healthy and all
-				vm.unregisterVM();
-				
-				query =null;
-				query = new BasicDBObject("VM Name", vm.getName());
-				DBCollection table1 = MongoDBConnection.db.getCollection("healthyvm");
-				DBCursor cursor = table1.find(query);
-				
-				DBCollection table2 = MongoDBConnection.db.getCollection("allvm");
-				
-				DBCursor cursor2 = table1.find(query);
-				if(cursor.hasNext())
+				try
 				{
-					//remove
-					table1.remove(cursor.next());
-				}
-				else
+				Task powerOffTask = vm.powerOffVM_Task();
+				
+				powerOffTask.waitForTask();
+				
+				if(powerOffTask.getTaskInfo().getState() == TaskInfoState.success)
 				{
-						
+					Task destroyTask = vm.destroy_Task();
+					
+					
+					destroyTask.waitForTask();
+				
+	                if (destroyTask.getTaskInfo().getState() == TaskInfoState.error) {
+	                      System.out.println("Error destroying Virtual Machine");
+	                      System.out.println("Reason: " + destroyTask.getTaskInfo().getError().localizedMessage);
+	                }
+	                if (destroyTask.getTaskInfo().getState() == TaskInfoState.success) {
+	                      System.out.println("VM Destroyed Successfully.");
+	                      System.out.println("---------------------------------------------------------------");
+	                      query =null;
+	      				query = new BasicDBObject("VM Name", vmName);
+	      				DBCollection table1 = MongoDBConnection.db.getCollection("healthyvm");
+	      				DBCursor cursor = table1.find(query);
+	      				
+	      				DBCollection table2 = MongoDBConnection.db.getCollection("allvm");
+	      				
+	      				DBCursor cursor2 = table1.find(query);
+	      				if(cursor.hasNext())
+	      				{
+	      					//remove
+	      					table1.remove(cursor.next());
+	      				}
+	      				else
+	      				{
+	      						
+	      				}
+	      				if(cursor2.hasNext())
+	      				{
+	      					//remove
+	      					table2.remove(cursor.next());
+	      				}
+	      				//vmCpuUsage.put(vm.getName(), Integer.parseInt(value));
+	      			cursor.close();
+	      			cursor2.close();
+	                }
 				}
-				if(cursor2.hasNext())
-				{
-					//remove
-					table2.remove(cursor.next());
+				
+				} 
+				catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				//vmCpuUsage.put(vm.getName(), Integer.parseInt(value));
-			cursor.close();
-			cursor2.close();
 			}
 			
 		}
