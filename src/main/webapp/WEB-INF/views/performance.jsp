@@ -1,30 +1,34 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%><html lang="en">
-
 <head>
-
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <meta name="author" content="">
-
+<META HTTP-EQUIV="refresh" CONTENT="3">
 <title>VMware Manager</title>
-
 <link href="../css/global-demo.css" rel="stylesheet" />
-<link href='http://fonts.googleapis.com/css?family=Oswald:300,400,700' rel='stylesheet' type='text/css'>
-<link href="http://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700" rel="stylesheet" type="text/css">
-<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Oswald:300,400,700'
+	rel='stylesheet' type='text/css'>
+<link
+	href="http://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700"
+	rel="stylesheet" type="text/css">
+<link
+	href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <style type="text/css">
-
-
 * {
 	margin: 0;
 	padding: 0;
 }
+
 body {
 	background: url(../images/noise_light-grey.jpg);
 	font-family: 'Helvetica Neue', arial, sans-serif;
@@ -39,6 +43,7 @@ h1 {
 	text-align: center;
 	text-shadow: 1px 1px 0 #fff, 2px 2px 0 #bbb;
 }
+
 h2 {
 	font-family: 'Oswald', sans-serif;
 	font-size: 2em;
@@ -48,23 +53,28 @@ h2 {
 	text-align: center;
 	text-transform: uppercase;
 }
+
 hr {
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #fff;
 	margin: 25px 0;
 	clear: both;
 }
+
 .centered {
 	text-align: center;
 }
+
 .wrapper {
 	width: 100%;
 	padding: 30px 0;
 }
+
 .container {
 	width: 1200px;
 	margin: 0 auto;
 }
+
 .table-container {
 	padding: 20px;
 	margin: 0 0 20px;
@@ -78,24 +88,29 @@ hr {
 	border-collapse: collapse;
 	table-layout: fixed;
 }
-.responsive-stacked-table th,
-.responsive-stacked-table td {
+
+.responsive-stacked-table th, .responsive-stacked-table td {
 	padding: 10px;
 	border-top: 1px solid #ddd;
 }
+
 .responsive-stacked-table thead {
 	background: #eee;
 	border-bottom: 3px solid #ddd;
 }
+
 .responsive-stacked-table tr:nth-child(even) {
 	background: #f5f5f5;
 }
+
 .responsive-stacked-table .fa {
 	margin-right: 5px;
 }
+
 .responsive-stacked-table .fa-check-circle {
 	color: #690;
 }
+
 .responsive-stacked-table .fa-times-circle {
 	color: #c00;
 }
@@ -104,20 +119,19 @@ hr {
 	font-size: .85em;
 }
 
-@media (max-width: 1199px) {
+@media ( max-width : 1199px) {
 	.container {
 		width: auto;
 		padding: 0 10px;
 	}
 }
 
-@media (max-width: 767px) {
+@media ( max-width : 767px) {
 	.responsive-stacked-table thead {
 		display: none;
 	}
-	.responsive-stacked-table tr,
-	.responsive-stacked-table th,
-	.responsive-stacked-table td {
+	.responsive-stacked-table tr, .responsive-stacked-table th,
+		.responsive-stacked-table td {
 		display: block;
 	}
 	.responsive-stacked-table td {
@@ -151,23 +165,19 @@ hr {
 	}
 }
 </style>
-
-
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
 	// Load the Visualization API and the piechart package.
 	google.load("visualization", "1", {
 		packages : [ "corechart" ]
 	});
-
 	// Set a callback to run when the Google Visualization API is loaded.
-
 	google.setOnLoadCallback(drawChart);
-
 	// Callback that creates and populates a data table,
 	// instantiates the pie chart, passes in the data and
 	// draws it.
 	var cpu = new Array();
+
 	<c:forEach items="${cpu}" var="vi">
 	var temp1 = new Object();
 	temp1 = '${vi}';
@@ -208,11 +218,6 @@ hr {
 		}
 	}
 </script>
-
-
-
-
-
 <!-- Optional theme -->
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
@@ -248,9 +253,7 @@ hr {
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
 </head>
-
 <body>
 <body>
 
@@ -285,15 +288,11 @@ hr {
 			</div>
 			<!-- /.navbar-collapse -->
 		</nav>
-
 		<div id="page-wrapper">
-
 			<div class="container-fluid">
-
 				<!-- Page Heading -->
 				<div class="row">
 					<div class="col-lg-12">
-
 						<h1 class="page-header">Virtual Machine Usage Statistics</h1>
 						<ol class="breadcrumb">
 							<li><i class="fa fa-dashboard"></i> <a
@@ -303,107 +302,58 @@ hr {
 				</div>
 				<!-- /.row -->
 				<c:forEach var="listValue" items="${VM}" varStatus="status">
-					
-				<div class="col-xs-12" onload="javascript:drawChart()">
-						
-					<div class="col-xs-4">
-								<div id="${listValue}" class="chart_div"></div>
+					<div class="col-xs-12" onload="javascript:drawChart()">
+						<div class="col-xs-4">
+							<div id="${listValue}" class="chart_div"></div>
+						</div>
+						<div class="col-xs-8">
+							<div class="wrapper">
+								<div class="table-container">
+									<table class="responsive-stacked-table">
+										<thead>
+											<tr>
+												<th>Virtual Machine Name</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td><a data-toggle="collapse" data-parent="#accordion"
+													href="#collapse1">${listValue}</a>
+													<div class="table-container">
+														<table class="responsive-stacked-table">
+															<thead>
+																<tr>
+																	<th>IP Address</th>
+																	<th>VM Name</th>
+																	<th>VM Memory Usage</th>
+																	<th>Max CPU Usage</th>
+																	<th>VM CPU Utilization</th>
+																	<th>Host memory Usage</th>
+																	<th>CPU Usage %</th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr>
+																	<td> ${ipaddr[status.index]}</td>
+																	<td>${listValue}</td>
+																	<td>V-20</td>
+																	<td>2399</td>
+																	<td>${cpu[status.index]}</td>
+																	<td>282</td>
+																	<td>${cpu[status.index]}</td>
+																</tr>
+															</tbody>
+														</table>
+													</div></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div class="col-xs-8">
-						
-						
-						
-						
-						
-								<div class="wrapper">
-	
-	
-		<div class="table-container">
-		    
-					<table class="responsive-stacked-table">
-			
-					<thead>
-						<tr>
-							<th>Virtual Machine Name</th>
-						</tr>
-					</thead>
-			
-					<tbody>
-					
-						<tr>
-							          <td><a data-toggle="collapse" data-parent="#accordion" href="#collapse1">${listValue}</a>
-							          	<div class="table-container">
-							          		<table class="responsive-stacked-table">
-							          			<thead>
-							          				<tr>
-							          					<th>IP Address</th>
-							          					<th>VM Name</th>
-							          					<th>VM Memory Usage</th>
-							          					<th>Max CPU Usage</th>
-							          					<th>VM CPU Utilization</th>
-							          					<th>Host memory Usage</th>
-							          					<th>CPU Usage %</th>
-							          				</tr>
-							          			</thead>	
-
-
-							          			<tbody>
-							          				<tr>
-							          					<td>V-26090845</td>
-							          					<td>${listValue}</td>
-							          					<td>V-20</td>
-							          					<td>2399</td>
-							          					<td>0</td>
-							          					<td>282</td>
-							          					<td>0</td>
-							          				</tr>
-							          			</tbody>	
-							          		</table>	
-							          	</div>	
-      									
-   									 </td>
-
-						</tr>
-						
-					</tbody>
-					</table>
-			
-		
-		</div>
-	
-</div>
-			
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-						
-					</div>
-					
-		
-				</div>
 				</c:forEach>
-				<div class="col-xs-12">
-			
-			
-			
-			
-			
-			
-			
-				</div>
-				
+				<div class="col-xs-12"></div>
 			</div>
 			<!-- /.row -->
 		</div>
@@ -419,7 +369,7 @@ hr {
 	<script
 		src="<c:url value="/resources/static/js/bootstrap.min.js"></c:url>">
 		
-</script>
+	</script>
 
 	<!-- Morris Charts JavaScript -->
 	<script
@@ -433,6 +383,4 @@ hr {
 	<script
 		src="<c:url value="/resources/static/js/plugins/morris/morris-data.js"></c:url>"></script>
 </body>
-
-
 </html>
