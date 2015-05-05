@@ -52,9 +52,26 @@ public class ScaleIn
 				BasicDBObject query = new BasicDBObject("vCPU usage", new BasicDBObject("$lte",
 						Integer.parseInt(WebAppInit.getProp().getProperty("lowerThreshold_ScaleIn"))));
 				
-				DBObject obj = db.getCollection("healthyvm").findOne(query);
+				DBCursor healthyCursor = db.getCollection("healthyvm").find(query);
 				
-				String vmName = (String) obj.get("VM Name");
+				DBObject obj = null;
+				String vmName = "";
+				while(healthyCursor.hasNext())
+				{
+					obj = healthyCursor.next();
+					
+					vmName = (String) obj.get("VM Name");
+					if(vmName.equalsIgnoreCase("Team3_Req_Server1")||vmName.equalsIgnoreCase("Team3_Req_Server2"))
+					{
+						continue;
+					}
+					else
+					{
+						break;
+					}
+				}
+				
+				
 				ManagedEntity entity =  new InventoryNavigator(si.getRootFolder()).searchManagedEntity("VirtualMachine", vmName);
 				
 				VirtualMachine vm = (VirtualMachine) entity;
