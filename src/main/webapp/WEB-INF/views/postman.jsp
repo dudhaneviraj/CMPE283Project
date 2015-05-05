@@ -20,7 +20,7 @@
 <script> 
 $(document).ready(function(){
     $("#method").change(function(){
-	if($( "#method option:selected" ).text()=='GET')
+	if($( "#method option:selected" ).text()=='GET' || $("#method option:selected" ).text()=='DELETE')
 	{
 		$("#req").slideUp("slow");
 	}
@@ -122,11 +122,11 @@ $(document).ready(function(){
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav side-nav">
 					<li><a href="/controller/vmdata"><i
-							class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
+							class="fa fa-fw fa-bar-chart-o"></i>All Virtual Machines</a></li>
 					<li><a href="/controller/performance"><i
-							class="fa fa-fw fa-bar-chart-o"></i> Charts</a></li>
+							class="fa fa-fw fa-bar-chart-o"></i>Healthy Virtual Machines</a></li>
 					<li><a href="/controller/postman"><i
-							class="fa fa-fw fa-desktop"></i>Postman</a></li>
+							class="fa fa-fw fa-desktop"></i>REST Client</a></li>
 				</ul>
 			</div>
 			<!-- /.navbar-collapse -->
@@ -195,7 +195,7 @@ $(document).ready(function(){
 
 						<div class="form-group">
 							<label>Response Body</label><br>
-							<textarea id="response" name="response" class="form-control"
+							<textarea id="response" name="response" class="form-control" readonly
 								rows="8">${response}</textarea>
 
 						</div>
@@ -208,8 +208,7 @@ $(document).ready(function(){
 
 						<div class="form-group">
 							<label>Responding VM IP</label><br>
-							<input id="response_from" name="response_from"
-									class="form-control" disabled="true">${response_from}</input>
+						${response_from}
 						</div>
 					</div>
 					
@@ -218,8 +217,7 @@ $(document).ready(function(){
 
 						<div class="form-group">
 							<label>Responding VM Name</label><br>
-							<input id="response_name" name="response_name"
-									class="form-control" disabled="true">${response_name}</input>
+						${response_name}
 						</div>
 					</div>
 				</div>

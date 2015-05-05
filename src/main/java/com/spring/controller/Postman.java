@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -25,6 +26,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -96,9 +98,9 @@ public class Postman {
 	{
 		DBCollection collec = MongoDBConnection.db.getCollection("healthyvm");
 		long allHealthyCount = collec.count();
-		
+		BasicDBObject query = new BasicDBObject("VM IP", new BasicDBObject("$ne", "null"));
 		long val = (requestCounter % allHealthyCount)+1;
-		DBCursor cursor = collec.find();
+		DBCursor cursor = collec.find(query);
 		DBObject obj = null;
 		while(val>0)
 		{
@@ -121,6 +123,7 @@ public class Postman {
 		HttpGet request = null;
 		HttpPost post = null;
 		HttpPut putObj = null;
+		HttpDelete deleteObj = null;
 		HttpResponse response = null;
 		StringBuilder responseBuilder = new StringBuilder();
 		BufferedReader rd = null;
@@ -151,9 +154,14 @@ public class Postman {
 				putObj.setHeader("Content-Type", "application/json");
 				putObj.setEntity(new StringEntity(body));
 				response = client.execute(putObj);
-
 			}
-			
+			else if(method.equalsIgnoreCase("DELETE"))
+			{
+				deleteObj = new HttpDelete(url);
+				deleteObj.setHeader("Content-Type", "application/json");
+				response = client.execute(putObj);
+
+			}			
 			rd = new BufferedReader (new InputStreamReader(response.getEntity().getContent()));
 
 			String line = "";

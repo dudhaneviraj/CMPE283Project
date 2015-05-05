@@ -278,11 +278,11 @@ hr {
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav side-nav">
 					<li><a href="/controller/vmdata"><i
-							class="fa fa-fw fa-dashboard"></i> Dashboard</a></li>
+							class="fa fa-fw fa-bar-chart-o"></i>All Virtual Machines</a></li>
 					<li><a href="/controller/performance"><i
-							class="fa fa-fw fa-bar-chart-o"></i> Charts</a></li>
+							class="fa fa-fw fa-bar-chart-o"></i>Healthy Virtual Machines</a></li>
 					<li><a href="/controller/postman"><i
-							class="fa fa-fw fa-desktop"></i>Postman</a></li>
+							class="fa fa-fw fa-desktop"></i>REST Client</a></li>
 				</ul>
 			</div>
 			<!-- /.navbar-collapse -->
@@ -293,10 +293,7 @@ hr {
 				<div class="row">
 					<div class="col-lg-12">
 						<h1 class="page-header">Virtual Machine Usage Statistics</h1>
-						<ol class="breadcrumb">
-							<li><i class="fa fa-dashboard"></i> <a
-								href="/controller/vmdata">Dashboard</a></li>
-						</ol>
+						
 					</div>
 				</div>
 				<!-- /.row -->

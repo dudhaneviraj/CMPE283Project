@@ -35,15 +35,7 @@ public class Charts {
 			vCPU.add(ob.get("vCPU usage").toString());
 			iP.add(ob.get("VM IP").toString());
 		}		
-		vm.add("VM1");
-		vm.add("VM2");
-		vm.add("VM3");
-		vCPU.add(new Random().nextInt(100)+"");
-		vCPU.add("74");
-		vCPU.add("90");
-		iP.add("192.168.10.12");
-		iP.add("192.168.10.12");
-		iP.add("192.168.10.12");
+		
 		// Adding Attributes
 		m.addObject("VM", vm);
 		m.addObject("cpu", vCPU);
@@ -69,15 +61,7 @@ public class Charts {
 			vCPU.add(ob.get("vCPU usage").toString());
 			iP.add(ob.get("VM IP").toString());
 		}
-		vm.add("VM1");
-		vm.add("VM2");
-		vm.add("VM3");
-		vCPU.add("88");
-		vCPU.add("74");
-		vCPU.add("90");
-		iP.add("192.168.10.12");
-		iP.add("192.168.10.12");
-		iP.add("192.168.10.12");
+		
 		// Adding Attrbutes
 		m.addObject("VM", vm);
 		m.addObject("cpu", vCPU);
