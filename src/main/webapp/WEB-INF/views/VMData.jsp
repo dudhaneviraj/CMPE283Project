@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <meta name="author" content="">
-<META HTTP-EQUIV="refresh" CONTENT="3">
+<!-- <META HTTP-EQUIV="refresh" CONTENT="3"> -->
 <title>VMware Manager</title>
 <link href="../css/global-demo.css" rel="stylesheet" />
 <link href='http://fonts.googleapis.com/css?family=Oswald:300,400,700'
@@ -213,12 +213,13 @@ hr {
 
 		var options = {
 			title : 'System Virtual Machine Summary',
-			width : 400,
+			width : 300,
+			is3D : true,
 			legend : {
 				position : 'none'
 			},
 			chart : {
-				title : 'System Virtual Machine Summary',
+				title : 'All Virtual Machine Server CPU Usage',
 				subtitle : 'CPU Usage By percentage'
 			},
 			bars : 'vertical', // Required for Material Bar Charts.
@@ -226,7 +227,7 @@ hr {
 				x : {
 					0 : {
 						side : 'bottom',
-						label : 'Percentage'
+						label : 'VM Server Names'
 					}
 					
 				// Top x-axis.
@@ -293,7 +294,7 @@ hr {
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="/controller/postman">VMWare
+				<a class="navbar-brand" href="/VMWareManager/postman">VMWare
 					VMManager</a>
 			</div>
 			<!-- Top Menu Items -->
@@ -302,11 +303,11 @@ hr {
 			<!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav side-nav">
-					<li><a href="/controller/vmdata"><i
+					<li><a href="/VMWareManager/vmdata"><i
 							class="fa fa-fw fa-bar-chart-o"></i>All Virtual Machines</a></li>
-					<li><a href="/controller/performance"><i
+					<li><a href="/VMWareManager/performance"><i
 							class="fa fa-fw fa-bar-chart-o"></i>Healthy Virtual Machines</a></li>
-					<li><a href="/controller/postman"><i
+					<li><a href="/VMWareManager/postman"><i
 							class="fa fa-fw fa-desktop"></i>REST Client</a></li>
 				</ul>
 			</div>
@@ -322,15 +323,22 @@ hr {
 					</div>
 				</div>
 				<!-- /.row -->
-				<div id="top_x_div" onload="javascript:drawStuff()"
-					style="width: 900px; height: 500px;"></div>
+				<div class="container">
+				<div class="col-md-2"></div>
+				<div class="col-md-2">
+					<div id="top_x_div" onload="javascript:drawStuff()"
+					style="width: 100%; height: 500px;"></div>
 
 
-
-								<div class="col-xs-12">
+					
+				</div>
+				<div class="col-md-2"></div>
+				</div>
+				<div class="col-md-12">
+													<div class="col-xs-12">
 							<div class="wrapper">
-								<div class="table-container">
-									<table class="responsive-stacked-table">
+								<div class="table-container table-responsive">
+									<table class="responsive-stacked-table table">
 										<thead>
 											<tr>
 												<th>Virtual Machine Name</th>
@@ -368,6 +376,9 @@ hr {
 							</div>
 						
 					</div>
+				</div>
+				
+
 
 				<div class="col-xs-12"></div>
 			</div>

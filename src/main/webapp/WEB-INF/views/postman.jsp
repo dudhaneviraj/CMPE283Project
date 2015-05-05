@@ -112,7 +112,7 @@ $(document).ready(function(){
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="/controller/postman">VMWare
+				<a class="navbar-brand" href="/VMWareManager/postman">VMWare
 					VMManager</a>
 			</div>
 			<!-- Top Menu Items -->
@@ -121,11 +121,11 @@ $(document).ready(function(){
 			<!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav side-nav">
-					<li><a href="/controller/vmdata"><i
+					<li><a href="/VMWareManager/vmdata"><i
 							class="fa fa-fw fa-bar-chart-o"></i>All Virtual Machines</a></li>
-					<li><a href="/controller/performance"><i
+					<li><a href="/VMWareManager/performance"><i
 							class="fa fa-fw fa-bar-chart-o"></i>Healthy Virtual Machines</a></li>
-					<li><a href="/controller/postman"><i
+					<li><a href="/VMWareManager/postman"><i
 							class="fa fa-fw fa-desktop"></i>REST Client</a></li>
 				</ul>
 			</div>
@@ -145,7 +145,7 @@ $(document).ready(function(){
 				<!-- /.row -->
 
 				<div class="row">
-					<form id = "postmanForm" name="postmanForm" action="/controller/send" method="post" novalidate="novalidate">
+					<form id = "postmanForm" name="postmanForm" action="/VMWareManager/send" method="post" novalidate="novalidate">
 						<div class="col-lg-9">
 							<div class="form-group">
 								<label>Enter URL Here</label> <input id="url" name="url"

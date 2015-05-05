@@ -202,7 +202,7 @@ hr {
 			var data = new google.visualization.DataTable();
 			data.addColumn('string', 'Topping');
 			data.addColumn('number', 'Slices');
-			data.addRows([ [ 'Free', e ], [ 'Used', 100 - e ] ]);
+			data.addRows([ [ 'Free', 100-e ], [ 'Used', e ] ]);
 			// Set chart options
 			var options = {
 				'title' : '' + VMList[i] + ' vCPU Utilization',
@@ -268,7 +268,7 @@ hr {
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="/controller/postman">VMWare
+				<a class="navbar-brand" href="/VMWareManager/postman">VMWare
 					VMManager</a>
 			</div>
 			<!-- Top Menu Items -->
@@ -277,11 +277,11 @@ hr {
 			<!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav side-nav">
-					<li><a href="/controller/vmdata"><i
+					<li><a href="/VMWareManager/vmdata"><i
 							class="fa fa-fw fa-bar-chart-o"></i>All Virtual Machines</a></li>
-					<li><a href="/controller/performance"><i
+					<li><a href="/VMWareManager/performance"><i
 							class="fa fa-fw fa-bar-chart-o"></i>Healthy Virtual Machines</a></li>
-					<li><a href="/controller/postman"><i
+					<li><a href="/VMWareManager/postman"><i
 							class="fa fa-fw fa-desktop"></i>REST Client</a></li>
 				</ul>
 			</div>
@@ -299,11 +299,11 @@ hr {
 				<!-- /.row -->
 				<c:forEach var="listValue" items="${VM}" varStatus="status">
 					<div class="col-xs-12" onload="javascript:drawChart()">
-						<div class="col-xs-3">
+						<div class="col-xs-5">
 							<br><br>
-							<div id="${listValue}" class="chart_div"></div>
+							<div id="${listValue}" class="chart_div" style="width: 100px; height: 100px;"></div>
 						</div>
-						<div class="col-xs-9">
+						<div class="col-xs-7">
 							<div class="wrapper">
 								<div class="table-container">
 									<table class="responsive-stacked-table">
@@ -320,24 +320,16 @@ hr {
 														<table class="responsive-stacked-table">
 															<thead>
 																<tr>
-																	<th>IP Address</th>
-																	<th>VM Name</th>
-																	<th>VM Memory Usage</th>
-																	<th>Max CPU Usage</th>
-																	<th>VM CPU Utilization</th>
-																	<th>Host memory Usage</th>
-																	<th>CPU Usage %</th>
+																	<th align= "center">IP Address</th>
+																	<th align= "center">VM Name</th>
+																	<th align= "center">CPU Usage %</th>
 																</tr>
 															</thead>
 															<tbody>
 																<tr>
-																	<td> ${ipaddr[status.index]}</td>
-																	<td>${listValue}</td>
-																	<td>V-20</td>
-																	<td>2399</td>
-																	<td>${cpu[status.index]}</td>
-																	<td>282</td>
-																	<td>${cpu[status.index]}</td>
+																	<td align= "center"> ${ipaddr[status.index]}</td>
+																	<td align= "center">${listValue}</td>
+																	<td align= "center">${cpu[status.index]}</td>
 																</tr>
 															</tbody>
 														</table>
