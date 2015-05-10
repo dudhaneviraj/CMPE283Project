@@ -104,7 +104,7 @@ public class ScaleIn
 	      				
 	      				DBCollection table2 = MongoDBConnection.db.getCollection("allvm");
 	      				
-	      				DBCursor cursor2 = table1.find(query);
+	      				DBCursor cursor2 = table2.find(query);
 	      				if(cursor.hasNext())
 	      				{
 	      					//remove

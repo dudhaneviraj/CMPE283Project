@@ -31,7 +31,7 @@ public class Scheduler {
 	
 	private HashMap<String, Integer> vmCpuUsage = new HashMap<String, Integer>();
 	//10 seconds
-	@Scheduled(fixedDelay=10000)
+	@Scheduled(fixedDelay=120000)
 	public void schedule()
 	{
 

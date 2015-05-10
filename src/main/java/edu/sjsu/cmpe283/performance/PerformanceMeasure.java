@@ -141,6 +141,19 @@ public class PerformanceMeasure
 				val = val/100;
 				value  = String.valueOf(val);
 				
+				BasicDBObject nullAllVM = new BasicDBObject("VM Name", vm.getName()).append("VM IP", "null");
+				DBCollection allvmTable = MongoDBConnection.db.getCollection("allvm");
+				DBCursor nullVMCursor = allvmTable.find(nullAllVM);
+				if(nullVMCursor.hasNext())
+				{
+					System.out.println("null vm updated");
+					BasicDBObject document = new BasicDBObject();
+					document.put("VM Name", vm.getName());
+					document.put("VM IP", vm.getGuest().getIpAddress());
+					//System.out.println("vm ip---" + vm.getGuest().getIpAddress());
+					allvmTable.update(nullAllVM, document);
+				}
+				
 				BasicDBObject dbObj = new BasicDBObject("VM Name", vm.getName());
 				DBCollection table = MongoDBConnection.db.getCollection("performance");
 				DBCursor cursor1 = table.find(dbObj);

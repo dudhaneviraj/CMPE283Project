@@ -50,7 +50,7 @@ public class WebAppInit implements ServletContextListener {
 					DBCollection table1 = MongoDBConnection.db.getCollection("allvm");
 					BasicDBObject allvmDocument = new BasicDBObject();
 					allvmDocument.put("VM Name", "Team3_Req_Server"+ REQUEST_SERVER_COUNT++);
-					allvmDocument.put("VM IP", "130.65.159.145");
+					allvmDocument.put("VM IP", "130.65.159.142");
 					table1.insert(allvmDocument);
 					
 					allvmDocument = new BasicDBObject();

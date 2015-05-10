@@ -33,6 +33,7 @@ import com.vmware.vim25.mo.ServiceInstance;
 import com.vmware.vim25.mo.VirtualMachine;
 
 import edu.sjsu.cmpe283.performance.PerformanceMeasure;
+import edu.sjsu.cmpe283.scaling.ScaleIn;
 import edu.sjsu.cmpe283.scaling.ScaleOut;
 import edu.sjsu.cmpe283.util.MongoDBConnection;
 import edu.sjsu.cmpe283.util.Util;
@@ -98,7 +99,7 @@ public class HomeController {
 					try
 					{
 						ScaleOut.scaleOut(vmCpuUsage, si);
-						//ScaleIn.scaleIn(vmCpuUsage, si);
+						ScaleIn.scaleIn(vmCpuUsage, si);
 					}
 					catch (InvalidProperty e) {
 						// TODO Auto-generated catch block
