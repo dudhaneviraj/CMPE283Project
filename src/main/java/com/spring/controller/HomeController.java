@@ -89,37 +89,8 @@ public class HomeController {
 				PerformanceMeasure perf = new PerformanceMeasure(si , vm, vmCpuUsage);
 
 			}
-			System.out.println("Test");
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-
-					try
-					{
-						ScaleOut.scaleOut(vmCpuUsage, si);
-						ScaleIn.scaleIn(vmCpuUsage, si);
-					}
-					catch (InvalidProperty e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (RuntimeFault e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (UnknownHostException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-
-				}
-			}).start();
-
-
+			ScaleOut.scaleOut(vmCpuUsage, si);
+			ScaleIn.scaleIn(vmCpuUsage, si);
 
 		}
 		catch (RemoteException e) {

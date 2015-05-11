@@ -65,14 +65,23 @@ public class Postman {
 		ArrayList<String> vm_Info = new ArrayList<String>();
 		
 		String forwardingIp = getForwardingServer(vm_Info);
-		url = formURL(url.trim(),forwardingIp);
-	
+		if(forwardingIp!=null)
+		{
+			url = formURL(url.trim(),forwardingIp);
+			m.addObject("response", getMethodResponse(req, url, method));
+			m.addObject("response_from", vm_Info.get(0));
+			m.addObject("response_name", vm_Info.get(1));
 		
+		}
+		else
+		{
+			url = formURL(url.trim(),forwardingIp);
+			m.addObject("response", "No Server to handle request");
+			m.addObject("response_from", "");
+			m.addObject("response_name", "");
 		
-		m.addObject("response", getMethodResponse(req, url, method));
-		m.addObject("response_from", vm_Info.get(0));
-		m.addObject("response_name", vm_Info.get(1));
-		
+		}
+			
 		return m;
 	}	
 	private String formURL(String url,String newIp)
@@ -98,24 +107,29 @@ public class Postman {
 	{
 		DBCollection collec = MongoDBConnection.db.getCollection("healthyvm");
 		long allHealthyCount = collec.count();
-		BasicDBObject query = new BasicDBObject("VM IP", new BasicDBObject("$ne", "null"));
-		long val = (requestCounter % allHealthyCount)+1;
-		DBCursor cursor = collec.find(query);
-		DBObject obj = null;
-		while(val>0)
+		if(allHealthyCount>0)
 		{
-			obj = cursor.next();
-			val--;
+			BasicDBObject query = new BasicDBObject("VM IP", new BasicDBObject("$ne", null));
+			long val = (requestCounter % allHealthyCount)+1;
+			DBCursor cursor = collec.find(query);
+			DBObject obj = null;
+			while(val>0 && cursor.hasNext())
+			{
+				obj = cursor.next();
+				val--;
+			}
+			System.out.println(obj.get("_id"));
+			System.out.println(obj.get("vCPU usage"));
+			
+			vm_Info.add((String)obj.get("VM IP"));
+			vm_Info.add((String)obj.get("VM Name"));
+			
+			cursor.close();
+			
+			return vm_Info.get(0);
+		
 		}
-		System.out.println(obj.get("_id"));
-		System.out.println(obj.get("vCPU usage"));
-		
-		vm_Info.add((String)obj.get("VM IP"));
-		vm_Info.add((String)obj.get("VM Name"));
-		
-		cursor.close();
-		
-		return vm_Info.get(0);
+			return null;
 			
 	}
 	public static String getMethodResponse(String body,String url,String method)

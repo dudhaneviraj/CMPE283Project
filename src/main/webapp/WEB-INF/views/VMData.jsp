@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <meta name="author" content="">
-<!-- <META HTTP-EQUIV="refresh" CONTENT="3"> -->
+<META HTTP-EQUIV="refresh" CONTENT="3">
 <title>VMware Manager</title>
 <link href="../css/global-demo.css" rel="stylesheet" />
 <link href='http://fonts.googleapis.com/css?family=Oswald:300,400,700'

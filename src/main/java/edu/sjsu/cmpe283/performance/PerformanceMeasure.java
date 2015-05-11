@@ -141,7 +141,7 @@ public class PerformanceMeasure
 				val = val/100;
 				value  = String.valueOf(val);
 				
-				BasicDBObject nullAllVM = new BasicDBObject("VM Name", vm.getName()).append("VM IP", "null");
+				BasicDBObject nullAllVM = new BasicDBObject("VM Name", vm.getName()).append("VM IP", null);
 				DBCollection allvmTable = MongoDBConnection.db.getCollection("allvm");
 				DBCursor nullVMCursor = allvmTable.find(nullAllVM);
 				if(nullVMCursor.hasNext())

@@ -99,29 +99,38 @@ public class ScaleIn
 	                      System.out.println("---------------------------------------------------------------");
 	                      query =null;
 	      				query = new BasicDBObject("VM Name", vmName);
-	      				DBCollection table1 = MongoDBConnection.db.getCollection("healthyvm");
-	      				DBCursor cursor = table1.find(query);
+	      				DBCollection healthvmTable = MongoDBConnection.db.getCollection("healthyvm");
+	      				DBCursor healthyCursor1 = healthvmTable.find(query);
 	      				
-	      				DBCollection table2 = MongoDBConnection.db.getCollection("allvm");
+	      				DBCollection allVmTable = MongoDBConnection.db.getCollection("allvm");
 	      				
-	      				DBCursor cursor2 = table2.find(query);
-	      				if(cursor.hasNext())
+	      				DBCursor allVMCursor = allVmTable.find(query);
+	      				DBCollection performanceTable = MongoDBConnection.db.getCollection("performance");
+	      				
+	      				DBCursor performanceCursor = performanceTable.find(query);
+	      				if(healthyCursor1.hasNext())
 	      				{
 	      					//remove
-	      					table1.remove(cursor.next());
+	      					healthvmTable.remove(healthyCursor1.next());
 	      				}
 	      				else
 	      				{
 	      						
 	      				}
-	      				if(cursor2.hasNext())
+	      				if(allVMCursor.hasNext())
 	      				{
 	      					//remove
-	      					table2.remove(cursor.next());
+	      					allVmTable.remove(allVMCursor.next());
+	      				}
+	      				if(performanceCursor.hasNext())
+	      				{
+	      					//remove
+	      					performanceTable.remove(performanceCursor.next());
 	      				}
 	      				//vmCpuUsage.put(vm.getName(), Integer.parseInt(value));
-	      			cursor.close();
-	      			cursor2.close();
+	      			healthyCursor1.close();
+	      			allVMCursor.close();
+	      			performanceCursor.close();
 	                }
 				}
 				

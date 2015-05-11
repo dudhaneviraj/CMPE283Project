@@ -25,7 +25,7 @@ public class Charts {
 		ArrayList<String> iP=new ArrayList<String>();
 		ModelAndView m=new ModelAndView("performance");
 		//Mongo Fetch Code
-		DBCollection col=MongoDBConnection.db.getCollection("performance");
+		DBCollection col=MongoDBConnection.db.getCollection("healthyvm");
 		DBCursor cursor=col.find();
 		System.out.println(col.count());
 		while(cursor.hasNext())
@@ -33,7 +33,15 @@ public class Charts {
 			DBObject ob=cursor.next();
 			vm.add(ob.get("VM Name").toString());
 			vCPU.add(ob.get("vCPU usage").toString());
-			iP.add(ob.get("VM IP").toString());
+			if((String)ob.get("VM IP")==null)
+			{
+				iP.add("");
+			}
+			else
+			{
+				
+			}
+			iP.add((String)ob.get("VM IP"));
 		}		
 		
 		// Adding Attributes
