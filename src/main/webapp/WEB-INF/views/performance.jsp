@@ -327,9 +327,9 @@ hr {
 															</thead>
 															<tbody>
 																<tr>
-																	<td align= "center"> ${ipaddr[status.index]}</td>
-																	<td align= "center">${listValue}</td>
-																	<td align= "center">${cpu[status.index]}</td>
+																	<td> ${ipaddr[status.index]}</td>
+																	<td>${listValue}</td>
+																	<td>${cpu[status.index]}</td>
 																</tr>
 															</tbody>
 														</table>

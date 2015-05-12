@@ -55,14 +55,14 @@ public class WebAppInit implements ServletContextListener {
 					
 					allvmDocument = new BasicDBObject();
 					allvmDocument.put("VM Name", "Team3_Req_Server"+ REQUEST_SERVER_COUNT++);
-					allvmDocument.put("VM IP", "130.65.159.179");
+					allvmDocument.put("VM IP", "130.65.159.120");
 					table1.insert(allvmDocument);
 					
-					
+					System.out.println(REQUEST_SERVER_COUNT);
 				}
 				else
 				{
-					REQUEST_SERVER_COUNT = 2;
+					REQUEST_SERVER_COUNT = (int)countOfAllVM;
 				}
 			
 				input = this.getClass().getClassLoader().getResourceAsStream("/config.properties");

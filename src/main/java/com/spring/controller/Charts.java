@@ -32,16 +32,24 @@ public class Charts {
 		{
 			DBObject ob=cursor.next();
 			vm.add(ob.get("VM Name").toString());
-			vCPU.add(ob.get("vCPU usage").toString());
+			if(ob.get("vCPU usage")==null)
+			{
+				vCPU.add("1");
+			}
+			else
+			{
+				vCPU.add(ob.get("vCPU usage").toString());
+			}
+			
 			if((String)ob.get("VM IP")==null)
 			{
 				iP.add("");
 			}
 			else
 			{
-				
+				iP.add((String)ob.get("VM IP"));
 			}
-			iP.add((String)ob.get("VM IP"));
+			
 		}		
 		
 		// Adding Attributes
@@ -66,8 +74,23 @@ public class Charts {
 		{
 			DBObject ob=cursor.next();
 			vm.add(ob.get("VM Name").toString());
-			vCPU.add(ob.get("vCPU usage").toString());
-			iP.add(ob.get("VM IP").toString());
+			if(ob.get("vCPU usage")==null)
+			{
+				vCPU.add("1");
+			}
+			else
+			{
+				vCPU.add(ob.get("vCPU usage").toString());
+			}
+			
+			if((String)ob.get("VM IP")==null)
+			{
+				iP.add("");
+			}
+			else
+			{
+				iP.add((String)ob.get("VM IP"));
+			}
 		}
 		
 		// Adding Attrbutes

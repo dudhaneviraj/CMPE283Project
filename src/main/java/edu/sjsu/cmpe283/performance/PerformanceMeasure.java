@@ -191,7 +191,7 @@ public class PerformanceMeasure
 				//if in next ping cycle, threshold of vm is greater than upper threshold and 
 				//vm is already present in
 				//healthy vm then don't put it in healthy vm and remove it from HVM
-				if(Integer.parseInt(value) < Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_Performance")))
+				if(Integer.parseInt(value) <= Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_Performance")))
 				{
 					
 					

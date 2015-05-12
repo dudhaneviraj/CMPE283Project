@@ -63,7 +63,7 @@ public class ScaleIn
 					vmName = (String) obj.get("VM Name");
 					if(vmName.equalsIgnoreCase("Team3_Req_Server1")||vmName.equalsIgnoreCase("Team3_Req_Server2"))
 					{
-						continue;
+						
 					}
 					else
 					{

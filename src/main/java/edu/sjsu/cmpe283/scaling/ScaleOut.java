@@ -42,7 +42,7 @@ public class ScaleOut
 		// less than or equal to upper threshold of scale out. Take the count
 		for(String vmName : vmCpuUsage.keySet())
 		{
-			if(vmCpuUsage.get(vmName) < Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_Performance")) 
+			if(vmCpuUsage.get(vmName) <= Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_Performance")) 
 					&& vmCpuUsage.get(vmName)>=Integer.parseInt(WebAppInit.getProp().getProperty("upperThresholdUsage_ScaleOut")))
 			{
 				count++;
@@ -70,8 +70,8 @@ public class ScaleOut
 			
 			vmName = vmName.substring(0, vmName.length()-1);
 			
-			String cloneName = vmName + (WebAppInit.REQUEST_SERVER_COUNT++);
-			
+			String cloneName = vmName + (WebAppInit.REQUEST_SERVER_COUNT +1);
+			WebAppInit.REQUEST_SERVER_COUNT++;
 			
 			boolean result = Clone.clone(vm,cloneName);
 			dbObj = null;

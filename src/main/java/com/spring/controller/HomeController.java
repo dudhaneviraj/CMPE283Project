@@ -62,7 +62,7 @@ public class HomeController {
 		return "home";
 	}		
 	//10 seconds
-	@Scheduled(fixedDelay=10000)
+	/*	@Scheduled(fixedDelay=10000)
 	public void schedule()
 	{
 
@@ -111,12 +111,12 @@ public class HomeController {
 
 
 
-		/*-----------------*/
+		-----------------
 
 
 		System.out.print("\n");	
 
 
-	}
+	}*/
 
 }
