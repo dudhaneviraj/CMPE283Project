@@ -30,4 +30,7 @@
 
 - Right click and Run as-> "Run On Server"
 
+- http://localhost:8080/VMWareManager/postman 
+
+
 
